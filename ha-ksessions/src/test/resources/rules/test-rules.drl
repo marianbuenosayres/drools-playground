@@ -1,0 +1,7 @@
+
+rule "This is a test rule"
+when
+	$s: String()
+then
+	System.out.println("test rule fired because of string: " + $s);
+end
