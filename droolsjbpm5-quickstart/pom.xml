@@ -3,15 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"> 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.plugtree.lessons</groupId>
-  <artifactId>quickstart-version-6</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>Practical Quickstart</name>
+  <parent>
+    <groupId>com.plugtree.training</groupId>
+    <artifactId>droolsjbpm-training</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>droolsjbpm5-quickstart</artifactId>
+  <name>Drools &amp; jBPM 5 Practical Quickstart</name>
   <url>http://plugtree.com</url>
 
   <properties>
-    <jbpm.version>6.0.0.Beta5</jbpm.version>
-    <drools.version>6.0.0.Beta5</drools.version>
+    <jbpm.version>${jbpm.version.5}</jbpm.version>
+    <drools.version>${drools.version.5}</drools.version>
   </properties>
 
   <dependencies>
@@ -46,8 +50,8 @@
       <version>${drools.version}</version>
     </dependency> 
     <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-api</artifactId>
+      <groupId>org.drools</groupId>
+      <artifactId>knowledge-api</artifactId>
       <version>${drools.version}</version>
     </dependency> 
     <!-- Dependencies for process execution -->
@@ -67,19 +71,6 @@
       <version>${jbpm.version}</version>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <configuration>
-          <target>1.6</target>
-          <source>1.6</source>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>
 

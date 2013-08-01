@@ -1,0 +1,8 @@
+<kmodule>
+
+  <kbase name="com.plugtree.training">
+    <ksession name="ksession1"/>
+  </kbase>
+
+</kmodule>
+

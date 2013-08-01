@@ -1,4 +1,4 @@
 drools-playground
 =================
 
-Drools playground for new functionalities
+Drools playground for training and new functionalities
