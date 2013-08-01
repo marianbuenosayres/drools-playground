@@ -1,38 +1,79 @@
 package com.plugtree.training;
 
-import com.plugtree.training.model.Artist;
-import com.plugtree.training.model.Playlist;
-import com.plugtree.training.model.Song;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.event.rule.AfterActivationFiredEvent;
-import org.drools.event.rule.DefaultAgendaEventListener;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.logger.KnowledgeRuntimeLogger;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
+import javax.inject.Inject;
+
+import org.drools.core.io.impl.ClassPathResource;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kie.api.KieBase;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieRepository;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.Message.Level;
+import org.kie.api.cdi.KSession;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+
+import com.plugtree.training.model.Artist;
+import com.plugtree.training.model.Playlist;
+import com.plugtree.training.model.Song;
 
 public class SimpleRulesExampleTest {
 
     private final List<String> firedRules = new ArrayList<String>();
 
+    @Inject
+    @KSession("ksession1")
+    KieSession ksession;
    
     @Test
+    public void simpleRulesThroughCDI() {
+    	Weld w = new Weld();
+    	WeldContainer wc = w.initialize();
+    	SimpleRulesExampleTest test = wc.instance().select(SimpleRulesExampleTest.class).get();
+    	KieSession ksession = test.ksession;
+        fire(ksession);
+    }
+    
+    @Test
     public void simpleRules() {
-        
+    	KieServices kservices = KieServices.Factory.get();
+    	KieRepository krepo = kservices.getRepository();
+    	KieFileSystem kfileSystem = kservices.newKieFileSystem();
+    	kfileSystem.write(new ClassPathResource("com/plugtree/training/rules.drl"));
+    	KieBuilder kbuilder = kservices.newKieBuilder(kfileSystem).buildAll();
+    	if (kbuilder.getResults().getMessages(Level.ERROR).size() > 0) {
+    		for (Message msg : kbuilder.getResults().getMessages(Level.ERROR)) {
+    			System.out.println(msg);
+    		}
+    		throw new IllegalArgumentException("Couldn't read knowledge base");
+    	}
+    	
+    	KieContainer kcontainer = kservices.newKieContainer(krepo.getDefaultReleaseId());
+    	KieBase kbase = kcontainer.newKieBase(null);
+    	
+    	KieSession ksession = kbase.newKieSession();
+    	
+        fire(ksession);
+    }
 
-        StatefulKnowledgeSession ksession = this.createKSession();
+	private void fire(KieSession ksession) {
+		//We add an AgendaEventListener to keep track of fired rules.
+        ksession.addEventListener(new DefaultAgendaEventListener(){
+            @Override
+            public void afterMatchFired(AfterMatchFiredEvent event) {
+                firedRules.add(event.getMatch().getRule().getName());
+            }
+        });
 
         //Creates a single song.
         ksession.insert(createAdagio());
@@ -61,44 +102,7 @@ public class SimpleRulesExampleTest {
         //objects references that it contains are not inserted.
         
         ksession.dispose();
-
-    }
-
-    /**
-     * Compiles resources and creates a new Ksession.
-     * @return
-     */
-    private StatefulKnowledgeSession createKSession(){
-
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        kbuilder.add(new ClassPathResource("rules/rules.drl"), ResourceType.DRL);
-
-        KnowledgeBuilderErrors errors = kbuilder.getErrors();
-        if (errors.size() > 0) {
-            for (KnowledgeBuilderError error : errors) {
-                System.err.println(error);
-            }
-            throw new IllegalArgumentException("Could not parse knowledge.");
-        }
-
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
-        
-        // We can add the Runtime Logger to see what is happening inside the Engine
-        // KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
-
-        //We add an AgendaEventListener to keep track of fired rules.
-        ksession.addEventListener(new DefaultAgendaEventListener(){
-            @Override
-            public void afterActivationFired(AfterActivationFiredEvent event) {
-                firedRules.add(event.getActivation().getRule().getName());
-            }
-        });
-
-        return ksession;
-    }
+	}
 
     /**
      * Creates a new playlist with 2 songs.
