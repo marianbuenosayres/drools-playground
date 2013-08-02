@@ -46,21 +46,28 @@ public class SimpleRulesExampleTest {
     
     @Test
     public void simpleRules() {
+    	//get the services
     	KieServices kservices = KieServices.Factory.get();
+    	//get the repository for different knowledge modules
     	KieRepository krepo = kservices.getRepository();
+    	//get a new filesystem to create new knowledge modules 
     	KieFileSystem kfileSystem = kservices.newKieFileSystem();
+    	//add knowledge files to the new file system
     	kfileSystem.write(new ClassPathResource("com/plugtree/training/rules.drl"));
+    	//get a builder for the file system and compile it
     	KieBuilder kbuilder = kservices.newKieBuilder(kfileSystem).buildAll();
+    	//see if any errors occurred
     	if (kbuilder.getResults().getMessages(Level.ERROR).size() > 0) {
     		for (Message msg : kbuilder.getResults().getMessages(Level.ERROR)) {
     			System.out.println(msg);
     		}
     		throw new IllegalArgumentException("Couldn't read knowledge base");
     	}
-    	
+    	//get the particular knowledge module we just created
     	KieContainer kcontainer = kservices.newKieContainer(krepo.getDefaultReleaseId());
+    	//get the knowledge base
     	KieBase kbase = kcontainer.newKieBase(null);
-    	
+    	//get the knowledge session
     	KieSession ksession = kbase.newKieSession();
     	
         fire(ksession);

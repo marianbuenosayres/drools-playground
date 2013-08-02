@@ -1,0 +1,28 @@
+package com.plugtree.training;
+
+import com.plugtree.training.model.Location;
+
+query "itContains" (String $container, String $contained)
+	Location(this.container == $container, this.contained == $contained)
+	or ( 
+		Location($subContainer: this.container, this.contained == $contained) 
+		and 
+		?itContains($container,$subContainer;) 
+	)
+end
+
+rule "go" 
+salience 10
+	when 
+		$s: String()
+	then
+		System.out.println($s);
+end
+
+rule "go1"
+	when 
+		$s: String(this == "go1")
+		itContains("House", "Pencil";)
+	then
+		System.out.println("The pencil is in the house");
+end

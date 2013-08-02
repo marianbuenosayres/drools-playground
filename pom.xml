@@ -19,9 +19,10 @@
     <module>droolsjbpm5-quickstart</module>
     <module>droolsjbpm6-quickstart</module>
     <module>drools5-introduction</module>
-    <module>drools6-introduction</module>
     <module>conditional-elements</module>
     <module>rule-attributes</module>
+    <module>drools6-introduction</module>
+    <module>backward-chaining</module>
     <!--module>04-DroolsExpert-Spreadsheet</module>
     <module>05-DroolsExpert-DSLSimple</module>
     <module>06-DroolsExpert-KnowledgeAgent</module>
