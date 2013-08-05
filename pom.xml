@@ -25,6 +25,7 @@
     <module>backward-chaining</module>
     <module>drools-decisiontables-example</module>
     <module>drools-dsl-example</module>
+    <module>optaplanner-example</module>
     <!--module>06-DroolsExpert-KnowledgeAgent</module>
     <module>08-DroolsExpert-ValidationExample</module>
     <module>09-DroolsExpert-RETEnetworkExamples</module-->
