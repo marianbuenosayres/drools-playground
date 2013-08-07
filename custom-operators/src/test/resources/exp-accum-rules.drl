@@ -1,0 +1,16 @@
+package com.plugtree.training;
+
+global com.plugtree.training.ResultHolder resultHolder;
+
+rule "Accumulation rule"
+when
+	$result: Number(doubleValue > 700) 
+	from accumulate(
+			$num: Number(doubleValue < 10), 
+			exponential($num)
+	)
+then
+	System.out.println("Accumulate function");
+	resultHolder.setResult($result.doubleValue());
+end
+

@@ -1,0 +1,21 @@
+package com.plugtree.training;
+
+import java.util.List;
+
+rule "Disjoint is empty"
+when
+	list1: List();
+	eval(list1.contains("1"))
+	list2: List(this != list1, this disjoint list1);
+then
+	System.out.println("Disjoint is empty");
+end
+
+rule "Disjoint is not empty"
+when
+	list1: List();
+	eval(list1.contains("1"))
+	list2: List(this != list1, this not disjoint list1);
+then
+	System.out.println("Disjoint is not empty");
+end
