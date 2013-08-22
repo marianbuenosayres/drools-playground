@@ -1,0 +1,8 @@
+package com.plugtree.training.example.cdiexample
+
+rule "rule 1"  when
+    s : String( )
+then
+    System.out.println( "String!! " + s );
+end
+

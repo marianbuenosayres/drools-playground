@@ -1,26 +1,22 @@
-package org.plugtree.training.expert;
-
-import com.plugtree.training.handsonlabs.enums.ItemType;
-import com.plugtree.training.handsonlabs.model.SpecialOffer;
-import com.plugtree.training.handsonlabs.model.StockItem;
+package com.plugtree.training.expert;
 
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.DecisionTableConfiguration;
-import org.drools.builder.DecisionTableInputType;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderError;
 import org.drools.builder.KnowledgeBuilderErrors;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
-import org.drools.decisiontable.InputType;
-import org.drools.decisiontable.SpreadsheetCompiler;
 import org.drools.io.impl.ClassPathResource;
 import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.plugtree.training.handsonlabs.enums.ItemType;
+import com.plugtree.training.handsonlabs.model.SpecialOffer;
+import com.plugtree.training.handsonlabs.model.StockItem;
 
 public class SpreadsheetHandsOnLabsTest  {
 

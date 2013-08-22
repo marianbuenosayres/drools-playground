@@ -1,0 +1,7 @@
+package com.plugtree.training.example.namedkiesession
+
+rule "rule 1" salience 10 when
+    s : String( )
+then
+    System.out.println( "String!! " + s );
+end
