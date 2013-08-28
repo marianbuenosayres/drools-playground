@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_EU00gHxLEeKNkfDVVR_QxA" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:itemDefinition id="_numberListItem" structureRef="java.util.List"/>
+  <bpmn2:itemDefinition id="_errorListItem" structureRef="java.util.List"/>
+  <bpmn2:itemDefinition id="_isEvenNumberItem" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33_multiInstanceItemType"/>
+  <bpmn2:process id="com.plugtree.training.multipleInstanceProcess" drools:packageName="com.plugtree.training" name="multipleInstanceProcess" isExecutable="true">
+    <bpmn2:property id="numberList" itemSubjectRef="_numberListItem"/>
+    <bpmn2:property id="errorList" itemSubjectRef="_errorListItem"/>
+    <bpmn2:property id="isEvenNumber" itemSubjectRef="_isEvenNumberItem"/>
+    <bpmn2:startEvent id="_A0A264EA-2762-494D-8D1D-9388DFE87A7F" drools:bgcolor="#9acd32" drools:selectable="true" name="start">
+      <bpmn2:outgoing>_4E583E09-9EE6-4C9E-9D1C-BA0FDE15FFB6</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="_4E583E09-9EE6-4C9E-9D1C-BA0FDE15FFB6" drools:bgcolor="#000000" drools:selectable="true" sourceRef="_A0A264EA-2762-494D-8D1D-9388DFE87A7F" targetRef="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33"/>
+    <bpmn2:subProcess id="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33" drools:selectable="true" name="Validate Even Number">
+      <bpmn2:incoming>_4E583E09-9EE6-4C9E-9D1C-BA0FDE15FFB6</bpmn2:incoming>
+      <bpmn2:outgoing>_BA4E2DA9-FABE-4FC4-961E-83FA6347F8DA</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="_EU00gXxLEeKNkfDVVR_QxA">
+        <bpmn2:dataInput id="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33_input" name="MultiInstanceInput"/>
+        <bpmn2:inputSet id="_EU00gnxLEeKNkfDVVR_QxA">
+          <bpmn2:dataInputRefs>_1757EAF6-7C9C-4E49-8264-D8D9072F5B33_input</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_EU00g3xLEeKNkfDVVR_QxA"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_EU1bkHxLEeKNkfDVVR_QxA">
+        <bpmn2:sourceRef>numberList</bpmn2:sourceRef>
+        <bpmn2:targetRef>_1757EAF6-7C9C-4E49-8264-D8D9072F5B33_input</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:multiInstanceLoopCharacteristics id="_EU1bkXxLEeKNkfDVVR_QxA">
+        <bpmn2:loopDataInputRef>_1757EAF6-7C9C-4E49-8264-D8D9072F5B33_input</bpmn2:loopDataInputRef>
+        <bpmn2:inputDataItem xsi:type="bpmn2:tDataInput" id="n" itemSubjectRef="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33_multiInstanceItemType"/>
+      </bpmn2:multiInstanceLoopCharacteristics>
+      <bpmn2:startEvent id="_93EB552C-117E-4D83-B51F-CFA9A29514CC" drools:bgcolor="#9acd32" drools:selectable="true" name="substart">
+        <bpmn2:outgoing>_D0E657B3-C71D-4185-BE76-AB280838EF81</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:scriptTask id="_12D476B2-B78C-40D2-B56E-05E2CA6EA196" drools:selectable="true" name="validate" scriptFormat="http://www.java.com/java">
+        <bpmn2:incoming>_D0E657B3-C71D-4185-BE76-AB280838EF81</bpmn2:incoming>
+        <bpmn2:outgoing>_BCC5A600-A908-418B-933A-24E3CBD049B8</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[System.out.println("Is even number? " + (((Number)n).intValue()%2==0));kcontext.setVariable("isEvenNumber", ((Number)n).intValue()%2==0);]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:exclusiveGateway id="_B6F22906-B4B3-4CB8-A737-CF747D14A1A6" drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="isEven" gatewayDirection="Diverging">
+        <bpmn2:incoming>_BCC5A600-A908-418B-933A-24E3CBD049B8</bpmn2:incoming>
+        <bpmn2:outgoing>_B1BEDD57-3E41-4E24-8E4C-BFB204B94D12</bpmn2:outgoing>
+        <bpmn2:outgoing>_00ECAEB9-8ACE-4ECE-A50A-8E763DABB927</bpmn2:outgoing>
+      </bpmn2:exclusiveGateway>
+      <bpmn2:scriptTask id="_B838D7F6-0CB3-4CFF-BD43-6CD3A62F3C53" drools:selectable="true" name="add number to Error List odd" scriptFormat="http://www.java.com/java">
+        <bpmn2:incoming>_B1BEDD57-3E41-4E24-8E4C-BFB204B94D12</bpmn2:incoming>
+        <bpmn2:outgoing>_C7792DF6-E38D-418E-BEBE-628DBD329D3F</bpmn2:outgoing>
+        <bpmn2:script><![CDATA[System.out.println("Odd number found: "+n);errorList.add(n);]]></bpmn2:script>
+      </bpmn2:scriptTask>
+      <bpmn2:endEvent id="_AA78C697-FCAA-4F3E-8873-CCBDF775BF72" drools:bgcolor="#ff6347" drools:selectable="true" name="oddend">
+        <bpmn2:incoming>_C7792DF6-E38D-418E-BEBE-628DBD329D3F</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:endEvent id="_0AA2A1D8-D16E-43FC-8C9F-993D89E5BFEB" drools:bgcolor="#ff6347" drools:selectable="true" name="evenend">
+        <bpmn2:incoming>_00ECAEB9-8ACE-4ECE-A50A-8E763DABB927</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:sequenceFlow id="_D0E657B3-C71D-4185-BE76-AB280838EF81" drools:bgcolor="#000000" drools:selectable="true" sourceRef="_93EB552C-117E-4D83-B51F-CFA9A29514CC" targetRef="_12D476B2-B78C-40D2-B56E-05E2CA6EA196"/>
+      <bpmn2:sequenceFlow id="_BCC5A600-A908-418B-933A-24E3CBD049B8" drools:bgcolor="#000000" drools:selectable="true" sourceRef="_12D476B2-B78C-40D2-B56E-05E2CA6EA196" targetRef="_B6F22906-B4B3-4CB8-A737-CF747D14A1A6"/>
+      <bpmn2:sequenceFlow id="_B1BEDD57-3E41-4E24-8E4C-BFB204B94D12" drools:bgcolor="#000000" drools:selectable="true" name="odd" sourceRef="_B6F22906-B4B3-4CB8-A737-CF747D14A1A6" targetRef="_B838D7F6-0CB3-4CFF-BD43-6CD3A62F3C53">
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_EU1bknxLEeKNkfDVVR_QxA" language="http://www.java.com/java"><![CDATA[return isEvenNumber == false;]]></bpmn2:conditionExpression>
+      </bpmn2:sequenceFlow>
+      <bpmn2:sequenceFlow id="_C7792DF6-E38D-418E-BEBE-628DBD329D3F" drools:bgcolor="#000000" drools:selectable="true" sourceRef="_B838D7F6-0CB3-4CFF-BD43-6CD3A62F3C53" targetRef="_AA78C697-FCAA-4F3E-8873-CCBDF775BF72"/>
+      <bpmn2:sequenceFlow id="_00ECAEB9-8ACE-4ECE-A50A-8E763DABB927" drools:bgcolor="#000000" drools:selectable="true" name="even" sourceRef="_B6F22906-B4B3-4CB8-A737-CF747D14A1A6" targetRef="_0AA2A1D8-D16E-43FC-8C9F-993D89E5BFEB">
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" id="_EU1bk3xLEeKNkfDVVR_QxA" language="http://www.java.com/java"><![CDATA[return isEvenNumber == true;]]></bpmn2:conditionExpression>
+      </bpmn2:sequenceFlow>
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="_BA4E2DA9-FABE-4FC4-961E-83FA6347F8DA" drools:bgcolor="#000000" drools:selectable="true" sourceRef="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33" targetRef="_52970336-699F-40E0-A15E-832553429E41"/>
+    <bpmn2:endEvent id="_52970336-699F-40E0-A15E-832553429E41" drools:bgcolor="#ff6347" drools:selectable="true" name="end">
+      <bpmn2:incoming>_BA4E2DA9-FABE-4FC4-961E-83FA6347F8DA</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="_EU1blHxLEeKNkfDVVR_QxA"/>
+    </bpmn2:endEvent>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="_EU1blXxLEeKNkfDVVR_QxA">
+    <bpmndi:BPMNPlane id="_EU1blnxLEeKNkfDVVR_QxA" bpmnElement="com.plugtree.training.multipleInstanceProcess">
+      <bpmndi:BPMNShape id="_EU1bl3xLEeKNkfDVVR_QxA" bpmnElement="_A0A264EA-2762-494D-8D1D-9388DFE87A7F">
+        <dc:Bounds height="30.0" width="30.0" x="30.0" y="177.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_EU1bmHxLEeKNkfDVVR_QxA" bpmnElement="_4E583E09-9EE6-4C9E-9D1C-BA0FDE15FFB6">
+        <di:waypoint xsi:type="dc:Point" x="45.0" y="192.0"/>
+        <di:waypoint xsi:type="dc:Point" x="403.5" y="192.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_EU1bmXxLEeKNkfDVVR_QxA" bpmnElement="_1757EAF6-7C9C-4E49-8264-D8D9072F5B33">
+        <dc:Bounds height="214.0" width="567.0" x="120.0" y="85.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EU1bmnxLEeKNkfDVVR_QxA" bpmnElement="_93EB552C-117E-4D83-B51F-CFA9A29514CC">
+        <dc:Bounds height="30.0" width="30.0" x="30.0" y="92.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EU1bm3xLEeKNkfDVVR_QxA" bpmnElement="_12D476B2-B78C-40D2-B56E-05E2CA6EA196">
+        <dc:Bounds height="80.0" width="100.0" x="105.0" y="67.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EU1bnHxLEeKNkfDVVR_QxA" bpmnElement="_B6F22906-B4B3-4CB8-A737-CF747D14A1A6">
+        <dc:Bounds height="40.0" width="40.0" x="250.0" y="87.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EU1bnXxLEeKNkfDVVR_QxA" bpmnElement="_B838D7F6-0CB3-4CFF-BD43-6CD3A62F3C53">
+        <dc:Bounds height="80.0" width="100.0" x="335.0" y="20.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EU1bnnxLEeKNkfDVVR_QxA" bpmnElement="_AA78C697-FCAA-4F3E-8873-CCBDF775BF72">
+        <dc:Bounds height="28.0" width="28.0" x="480.0" y="46.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_EU1bn3xLEeKNkfDVVR_QxA" bpmnElement="_0AA2A1D8-D16E-43FC-8C9F-993D89E5BFEB">
+        <dc:Bounds height="28.0" width="28.0" x="480.0" y="155.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_EU1boHxLEeKNkfDVVR_QxA" bpmnElement="_D0E657B3-C71D-4185-BE76-AB280838EF81">
+        <di:waypoint xsi:type="dc:Point" x="45.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="155.0" y="107.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_EU1boXxLEeKNkfDVVR_QxA" bpmnElement="_BCC5A600-A908-418B-933A-24E3CBD049B8">
+        <di:waypoint xsi:type="dc:Point" x="155.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="270.0" y="107.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_EU1bonxLEeKNkfDVVR_QxA" bpmnElement="_B1BEDD57-3E41-4E24-8E4C-BFB204B94D12">
+        <di:waypoint xsi:type="dc:Point" x="270.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="390.0" y="145.0"/>
+        <di:waypoint xsi:type="dc:Point" x="385.0" y="60.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_EU1bo3xLEeKNkfDVVR_QxA" bpmnElement="_C7792DF6-E38D-418E-BEBE-628DBD329D3F">
+        <di:waypoint xsi:type="dc:Point" x="385.0" y="60.0"/>
+        <di:waypoint xsi:type="dc:Point" x="494.0" y="60.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_EU1bpHxLEeKNkfDVVR_QxA" bpmnElement="_00ECAEB9-8ACE-4ECE-A50A-8E763DABB927">
+        <di:waypoint xsi:type="dc:Point" x="270.0" y="107.0"/>
+        <di:waypoint xsi:type="dc:Point" x="390.0" y="254.0"/>
+        <di:waypoint xsi:type="dc:Point" x="494.0" y="169.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="_EU1bpXxLEeKNkfDVVR_QxA" bpmnElement="_BA4E2DA9-FABE-4FC4-961E-83FA6347F8DA">
+        <di:waypoint xsi:type="dc:Point" x="403.5" y="192.0"/>
+        <di:waypoint xsi:type="dc:Point" x="746.0" y="192.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_EU1bpnxLEeKNkfDVVR_QxA" bpmnElement="_52970336-699F-40E0-A15E-832553429E41">
+        <dc:Bounds height="28.0" width="28.0" x="732.0" y="178.0"/>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmn2:relationship id="_EU1bp3xLEeKNkfDVVR_QxA">
+    <bpmn2:extensionElements>
+      <drools:ProcessAnalysisData>
+        <drools:Scenario xsi:type="drools:Scenario" id="default" name="Simulationscenario">
+          <drools:ScenarioParameters xsi:type="drools:ScenarioParameters_._type" baseTimeUnit="s"/>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_52970336-699F-40E0-A15E-832553429E41" id="_EU1bqHxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:ProcessingTime xsi:type="drools:Parameter">
+                <drools:RandomDistribution max="0.0" min="0.0"/>
+              </drools:ProcessingTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_0AA2A1D8-D16E-43FC-8C9F-993D89E5BFEB" id="_EU1bqXxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:ProcessingTime xsi:type="drools:Parameter">
+                <drools:RandomDistribution max="0.0" min="0.0"/>
+              </drools:ProcessingTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_B838D7F6-0CB3-4CFF-BD43-6CD3A62F3C53" id="_EU1bqnxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:ProcessingTime xsi:type="drools:Parameter">
+                <drools:RandomDistribution max="0.0" min="0.0"/>
+              </drools:ProcessingTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+            <drools:CostParameters xsi:type="drools:CostParameters">
+              <drools:UnitCost xsi:type="drools:Parameter">
+                <drools:DecimalParameter value="0"/>
+              </drools:UnitCost>
+            </drools:CostParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_C7792DF6-E38D-418E-BEBE-628DBD329D3F" id="_EU1bq3xLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_BCC5A600-A908-418B-933A-24E3CBD049B8" id="_EU1brHxLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_A0A264EA-2762-494D-8D1D-9388DFE87A7F" id="_EU1brXxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:WaitTime xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="0.0"/>
+              </drools:WaitTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_B1BEDD57-3E41-4E24-8E4C-BFB204B94D12" id="_EU1brnxLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_4E583E09-9EE6-4C9E-9D1C-BA0FDE15FFB6" id="_EU1br3xLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_BA4E2DA9-FABE-4FC4-961E-83FA6347F8DA" id="_EU1bsHxLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_12D476B2-B78C-40D2-B56E-05E2CA6EA196" id="_EU1bsXxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:ProcessingTime xsi:type="drools:Parameter">
+                <drools:RandomDistribution max="0.0" min="0.0"/>
+              </drools:ProcessingTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+            <drools:CostParameters xsi:type="drools:CostParameters">
+              <drools:UnitCost xsi:type="drools:Parameter">
+                <drools:DecimalParameter value="0"/>
+              </drools:UnitCost>
+            </drools:CostParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_93EB552C-117E-4D83-B51F-CFA9A29514CC" id="_EU1bsnxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:WaitTime xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="0.0"/>
+              </drools:WaitTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_00ECAEB9-8ACE-4ECE-A50A-8E763DABB927" id="_EU1bs3xLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_D0E657B3-C71D-4185-BE76-AB280838EF81" id="_EU1btHxLEeKNkfDVVR_QxA">
+            <drools:ControlParameters xsi:type="drools:ControlParameters">
+              <drools:Probability xsi:type="drools:Parameter">
+                <drools:FloatingParameter value="100.0"/>
+              </drools:Probability>
+            </drools:ControlParameters>
+          </drools:ElementParameters>
+          <drools:ElementParameters xsi:type="drools:ElementParameters_._type" elementId="_AA78C697-FCAA-4F3E-8873-CCBDF775BF72" id="_EU1btXxLEeKNkfDVVR_QxA">
+            <drools:TimeParameters xsi:type="drools:TimeParameters">
+              <drools:ProcessingTime xsi:type="drools:Parameter">
+                <drools:RandomDistribution max="0.0" min="0.0"/>
+              </drools:ProcessingTime>
+              <drools:TimeUnit>ms</drools:TimeUnit>
+            </drools:TimeParameters>
+          </drools:ElementParameters>
+        </drools:Scenario>
+      </drools:ProcessAnalysisData>
+    </bpmn2:extensionElements>
+    <bpmn2:source>_EU00gHxLEeKNkfDVVR_QxA</bpmn2:source>
+    <bpmn2:target>_EU00gHxLEeKNkfDVVR_QxA</bpmn2:target>
+  </bpmn2:relationship>
+</bpmn2:definitions>

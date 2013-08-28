@@ -1,0 +1,33 @@
+import org.drools.runtime.process.WorkflowProcessInstance;
+
+rule "input of at least 100 gets a message"
+ruleflow-group "task-type-variety-rules"
+when
+	$pi: WorkflowProcessInstance()
+	eval ($pi.getVariable("input") != null)
+	eval (Integer.valueOf($pi.getVariable("input").toString()) >= 100)
+then
+	System.out.println(drools.getRule().getName());
+	$pi.setVariable("processVar", "message");
+end
+
+rule "input under 100 gets an error"
+ruleflow-group "task-type-variety-rules"
+when
+	$pi: WorkflowProcessInstance()
+	eval ($pi.getVariable("input") != null)
+	eval (Integer.valueOf($pi.getVariable("input").toString()) < 100)
+then
+	System.out.println(drools.getRule().getName()); 
+    $pi.setVariable("processVar", "error");
+end
+
+rule "null input gets an error"
+ruleflow-group "task-type-variety-rules"
+when 
+	$pi: WorkflowProcessInstance()
+	eval ($pi.getVariable("input") == null)
+then
+	System.out.println(drools.getRule().getName());
+	$pi.setVariable("processVar", "error");
+end
