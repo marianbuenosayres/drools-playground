@@ -32,6 +32,8 @@
     <module>drools6-kiesession-from-files</module>
     <module>drools6-named-kiesession</module>
     <module>drools6-cdi-kiesession</module>
+    <module>jbpm5-introduction</module>
+    <module>jbpm6-introduction</module>
     <!--module>06-DroolsExpert-KnowledgeAgent</module>
     <module>08-DroolsExpert-ValidationExample</module>
     <module>09-DroolsExpert-RETEnetworkExamples</module-->
