@@ -11,8 +11,8 @@
   <properties>
     <drools.version.5>5.5.0.Final</drools.version.5>
     <jbpm.version.5>5.4.0.Final</jbpm.version.5>
-    <drools.version.6>6.0.0.CR1</drools.version.6>
-    <jbpm.version.6>6.0.0.CR1</jbpm.version.6>
+    <drools.version.6>6.0.0.CR3</drools.version.6>
+    <jbpm.version.6>6.0.0.CR3</jbpm.version.6>
   </properties>
 
   <modules>
@@ -37,6 +37,7 @@
     <module>drools-persistent-session</module>
     <module>jbpm-persistent-session</module>
     <module>human-task-example</module>
+    <module>emergency-service-case</module>
     <!--module>06-DroolsExpert-KnowledgeAgent</module>
     <module>08-DroolsExpert-ValidationExample</module>
     <module>09-DroolsExpert-RETEnetworkExamples</module-->

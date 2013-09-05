@@ -1,0 +1,22 @@
+package com.plugtree.training
+
+import org.jbpm.workflow.instance.WorkflowProcessInstance;
+
+rule "Assign Intensive Care Bed if status is Critical"
+ruleflow-group 'assign-bed'
+when
+    $process: WorkflowProcessInstance(getVariable('patientStatus') == 'Critical')
+then
+    //assign intensive care bed in the process instance
+    $process.setVariable('assignbed', 'intensive-care-bed');
+end
+
+
+rule "Assign Regular Bed if the status is not Critical"
+ruleflow-group 'assign-bed'
+when
+    $process: WorkflowProcessInstance(getVariable('patientStatus') != 'Critical')
+then
+    //assign regular bed in the process instance
+    $process.setVariable('assignbed', 'regular-bed');
+end
