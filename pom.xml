@@ -38,6 +38,7 @@
     <module>jbpm-persistent-session</module>
     <module>human-task-example</module>
     <module>emergency-service-case</module>
+    <module>domain-specific-processes-homework</module>
     <!--module>06-DroolsExpert-KnowledgeAgent</module>
     <module>08-DroolsExpert-ValidationExample</module>
     <module>09-DroolsExpert-RETEnetworkExamples</module-->
