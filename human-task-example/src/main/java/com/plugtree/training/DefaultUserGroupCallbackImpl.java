@@ -1,10 +1,13 @@
 package com.plugtree.training;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jbpm.services.task.impl.model.GroupImpl;
 import org.jbpm.services.task.impl.model.UserImpl;
@@ -13,6 +16,7 @@ import org.kie.internal.task.api.UserGroupCallback;
 public class DefaultUserGroupCallbackImpl implements UserGroupCallback {
 
 	private final Map<UserImpl, List<GroupImpl>> userGroupMapping = new HashMap<UserImpl, List<GroupImpl>>();
+	private final Set<String> groupNames = new HashSet<String>();
 
     public DefaultUserGroupCallbackImpl() {
     }
@@ -26,6 +30,7 @@ public class DefaultUserGroupCallbackImpl implements UserGroupCallback {
     		}
     	}
     	userGroupMapping.put(user, groups);
+    	groupNames.addAll(Arrays.asList(groupIds));
     }
     
     public void removeUser(String userId) {
@@ -46,17 +51,7 @@ public class DefaultUserGroupCallbackImpl implements UserGroupCallback {
 
     @Override
     public boolean existsGroup(String groupId) {
-        Iterator<UserImpl> iter = userGroupMapping.keySet().iterator();
-        while (iter.hasNext()) {
-            UserImpl u = iter.next();
-            List<GroupImpl> groups = userGroupMapping.get(u);
-            for (GroupImpl g : groups) {
-                if (g.getId().equals(groupId)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    	return groupNames.contains(groupId);
     }
 
     public List<String> getGroupsForUser(String userId, List<String> groupIds) {
@@ -84,4 +79,10 @@ public class DefaultUserGroupCallbackImpl implements UserGroupCallback {
             List<String> allExistingGroupIds) {
         return getGroupsForUser(userId);
     }
+    
+    public Map<UserImpl, List<GroupImpl>> getUserGroupMapping() {
+    	Map<UserImpl, List<GroupImpl>> result = new HashMap<UserImpl, List<GroupImpl>>();
+    	result.putAll(userGroupMapping);
+		return result;
+	}
 }
