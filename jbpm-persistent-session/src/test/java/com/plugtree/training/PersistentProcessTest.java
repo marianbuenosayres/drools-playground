@@ -33,6 +33,7 @@ import org.kie.api.runtime.process.WorkItem;
 import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.runtime.process.WorkItemManager;
 import org.kie.internal.KnowledgeBaseFactory;
+import org.kie.internal.persistence.jpa.JPAKnowledgeService;
 
 import bitronix.tm.TransactionManagerServices;
 import bitronix.tm.resource.jdbc.PoolingDataSource;
@@ -106,7 +107,7 @@ public class PersistentProcessTest {
 		sessionProperties.put("drools.processSignalManagerFactory", "org.jbpm.persistence.processinstance.JPASignalManagerFactory");
 		this.ksessionConf = ks.newKieSessionConfiguration(sessionProperties);
 		
-		ksession = ks.getStoreServices().newKieSession(kbase, this.ksessionConf, this.environment);
+		ksession = JPAKnowledgeService.newStatefulKnowledgeSession(kbase, this.ksessionConf, this.environment);
 
     	ksession.getWorkItemManager().registerWorkItemHandler("task1.1", task11Handler);
         ksession.getWorkItemManager().registerWorkItemHandler("task1.2", task12Handler);
@@ -117,8 +118,7 @@ public class PersistentProcessTest {
 	}
 	
 	public void reloadSession(int sessionId) {
-		KieServices ks = KieServices.Factory.get();
-		ksession = ks.getStoreServices().loadKieSession(sessionId, this.kbase, this.ksessionConf, this.environment);
+		ksession = JPAKnowledgeService.loadStatefulKnowledgeSession(sessionId, this.kbase, this.ksessionConf, this.environment);
 		
 		//We have to register the work item handlers again
     	ksession.getWorkItemManager().registerWorkItemHandler("task1.1", task11Handler);

@@ -36,6 +36,7 @@
     <module>jbpm6-introduction</module>
     <module>drools-persistent-session</module>
     <module>jbpm-persistent-session</module>
+    <module>persistence-homework-results</module>
     <module>human-task-example</module>
     <module>ht-homework-results</module>
     <module>ldap-human-tasks</module>
