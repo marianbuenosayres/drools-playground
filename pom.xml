@@ -37,6 +37,7 @@
     <module>drools-persistent-session</module>
     <module>jbpm-persistent-session</module>
     <module>human-task-example</module>
+    <module>ht-homework-results</module>
     <module>ldap-human-tasks</module>
     <module>emergency-service-case</module>
     <module>domain-specific-processes-homework</module>
