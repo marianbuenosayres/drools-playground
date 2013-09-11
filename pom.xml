@@ -37,6 +37,7 @@
     <module>drools-persistent-session</module>
     <module>jbpm-persistent-session</module>
     <module>human-task-example</module>
+    <module>ldap-human-tasks</module>
     <module>emergency-service-case</module>
     <module>domain-specific-processes-homework</module>
     <!--module>06-DroolsExpert-KnowledgeAgent</module>
