@@ -92,7 +92,7 @@
                             <directory>${basedir}</directory>
                             <includes>
                                 <include>btm*</include>
-                                <include>workflow.*.db</include>
+                                <include>tasks.*.db</include>
                             </includes>
                         </fileset>
                     </filesets>

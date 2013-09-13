@@ -1,0 +1,21 @@
+package com.plugtree.training;
+
+import com.plugtree.training.model.Requirement;
+
+rule "Prioritize urgent tasks"
+ruleflow-group "distribute-reqs"
+when
+    $r: Requirement(name contains "URGENT") @Watch(!priority)
+then
+    System.out.println("PRIORITY 1");
+    modify ($r) { setPriority(1) }
+end
+
+rule "Prioritize non-urgent tasks"
+ruleflow-group "distribute-reqs"
+when
+    $r: Requirement(name contains "SIMPLE") @Watch(!priority)
+then
+    System.out.println("PRIORITY 2");
+    modify ($r) { setPriority(2) }
+end
