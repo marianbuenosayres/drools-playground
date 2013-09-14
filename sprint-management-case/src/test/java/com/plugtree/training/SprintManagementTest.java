@@ -16,6 +16,10 @@ import org.drools.core.event.RuleFlowGroupActivatedEvent;
 import org.drools.core.impl.EnvironmentFactory;
 import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.drools.persistence.SingleSessionCommandService;
+import org.jbpm.process.audit.AuditLogService;
+import org.jbpm.process.audit.JPAAuditLogService;
+import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
+import org.jbpm.process.audit.ProcessInstanceLog;
 import org.jbpm.services.task.HumanTaskServiceFactory;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
@@ -90,6 +94,7 @@ public class SprintManagementTest {
 				workingMemory.fireAllRules();
 			}
 		});
+        new JPAWorkingMemoryDbLogger(session);
 	}
 
 	@Test
@@ -301,7 +306,49 @@ public class SprintManagementTest {
         taskService.complete(charlesBugTask.getId(), "charles", bugfixResults2);
         
         //Now we're back at testing the two corrected tasks
+        List<TaskSummary> fixedTasks = taskService.getTasksAssignedAsPotentialOwner("mary", "en-UK");
+        Assert.assertNotNull(fixedTasks);
+        Assert.assertEquals(2, fixedTasks.size());
         
+        //mary takes one and mark another
+        TaskSummary fixTask1 = fixedTasks.get(0);
+        TaskSummary fixTask2 = fixedTasks.get(1);
+        taskService.claim(fixTask1.getId(), "mary");
+        taskService.claim(fixTask2.getId(), "mark");
+        taskService.start(fixTask1.getId(), "mary");
+        taskService.start(fixTask2.getId(), "mark");
         
+        //They don't find any bugs in either requirement
+        Task maryFixTask = taskService.getTaskById(fixTask1.getId());
+        Content fixContent1 = taskService.getContentById(maryFixTask.getTaskData().getDocumentContentId());
+        Map<?, ?> fixInput1 = (Map<?, ?>) ContentMarshallerHelper.unmarshall(fixContent1.getContent(), env);
+        Requirement fixReq1 = (Requirement) fixInput1.get("testReq");
+        fixReq1.setTested(true);
+        fixReq1.setBugs(new ArrayList<String>());
+        
+        Task markFixTask = taskService.getTaskById(fixTask2.getId());
+        Content fixContent2 = taskService.getContentById(markFixTask.getTaskData().getDocumentContentId());
+        Map<?, ?> fixInput2 = (Map<?, ?>) ContentMarshallerHelper.unmarshall(fixContent2.getContent(), env);
+        Requirement fixReq2 = (Requirement) fixInput2.get("testReq");
+        fixReq2.setTested(true);
+        fixReq2.setBugs(new ArrayList<String>());
+        
+        Map<String, Object> fixTestResults1 = new HashMap<String, Object>();
+        fixTestResults1.put("reqResult", fixReq1);
+        
+        Map<String, Object> fixTestResults2 = new HashMap<String, Object>();
+        fixTestResults2.put("reqResult", fixReq2);
+        
+        //they complete the testing task
+        taskService.complete(fixTask1.getId(), "mary", fixTestResults1);
+        taskService.complete(fixTask2.getId(), "mark", fixTestResults2);
+        
+        //After finishing all 3 requirements, sprint is completed, so sprintManagementProcess process should be completed as well
+        AuditLogService history = new JPAAuditLogService(env);
+        List<ProcessInstanceLog> sprintProcesses =  history.findProcessInstances("sprintManagementProcess");
+        Assert.assertNotNull(sprintProcesses);
+        Assert.assertEquals(1, sprintProcesses.size());
+        ProcessInstanceLog log  = sprintProcesses.iterator().next();
+        Assert.assertEquals(ProcessInstance.STATE_COMPLETED, log.getStatus().intValue());
 	}
 }

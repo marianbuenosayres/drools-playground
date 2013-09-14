@@ -44,6 +44,7 @@
     <module>domain-specific-processes-homework</module>
     <module>runtime-manager-example</module>
     <module>jms-task-service-example</module>
+    <module>sprint-management-case</module>
   </modules>
   <build>
     <pluginManagement>
