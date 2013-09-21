@@ -45,6 +45,7 @@
     <module>runtime-manager-example</module>
     <module>jms-task-service-example</module>
     <module>sprint-management-case</module>
+    <module>sprint-management-case-cdi</module>
   </modules>
   <build>
     <pluginManagement>
