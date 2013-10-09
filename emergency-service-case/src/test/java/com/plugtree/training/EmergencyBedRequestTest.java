@@ -4,12 +4,14 @@ package com.plugtree.training;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.jbpm.executor.entities.RequestInfo;
 import org.jbpm.executor.impl.ClassCacheManager;
 import org.jbpm.executor.impl.ExecutorImpl;
 import org.jbpm.executor.impl.ExecutorQueryServiceImpl;
@@ -48,6 +50,7 @@ import bitronix.tm.TransactionManagerServices;
 public class EmergencyBedRequestTest {
 
     private KieSession session;
+    private EntityManagerFactory executorEmf;
 
     @Before
     public void setUp() throws Exception {
@@ -59,6 +62,9 @@ public class EmergencyBedRequestTest {
     @After
     public void tearDown() {
     	this.session.dispose();
+        if (this.executorEmf != null) {
+            this.executorEmf.close();
+        }
     	TransactionManagerServices.getTransactionManager().shutdown();
     }
 
@@ -205,7 +211,7 @@ public class EmergencyBedRequestTest {
         Assert.assertEquals("Notify Gate to Ambulance", processInstance.getNodeInstances().iterator().next().getNodeName());
         
         //let the executor complete the task
-        Thread.sleep(5000);
+        waitTillCommandsDone(NotifySystemCommand.class.getName());
         
         //by now the task should be completed, so we should be at check in Patient
         Assert.assertEquals("Check In Patient", processInstance.getNodeInstances().iterator().next().getNodeName());
@@ -228,6 +234,20 @@ public class EmergencyBedRequestTest {
         Assert.assertEquals("Check in completed successfuly", processInstance.getVariable("result"));
         Assert.assertEquals(checkinDate, processInstance.getVariable("bedResponseTime"));
     }
+
+        private void waitTillCommandsDone(String cmdClassName) {
+                int size = 1;
+                while (size > 0) {
+                        try {
+                                Thread.sleep(2000);
+                        } catch (InterruptedException e) { }
+                        EntityManager em = this.executorEmf.createEntityManager();
+                        List<?> result = em.createQuery("select r from " + RequestInfo.class.getName() +
+                                        " r where r.commandName = :cmdClassName and r.status not like 'DONE'").
+                                        setParameter("cmdClassName", cmdClassName).getResultList();
+                        size = result.size();
+                }
+        }
 
 	private ExecutorService newExecutorService() {
 		RuntimeManager manager = new RuntimeManager() {
@@ -256,8 +276,8 @@ public class EmergencyBedRequestTest {
 			
 		};
 		RuntimeManagerRegistry.get().addRuntimeManager("testDeploymentId", manager);
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.jbpm.executor");
-	    EntityManager em = emf.createEntityManager();
+		this.executorEmf = Persistence.createEntityManagerFactory("org.jbpm.executor");
+	        EntityManager em = executorEmf.createEntityManager();
 		ExecutorServiceImpl service = new ExecutorServiceImpl();
 		JbpmServicesPersistenceManagerImpl pm = new JbpmServicesPersistenceManagerImpl();
 		pm.setEm(em);

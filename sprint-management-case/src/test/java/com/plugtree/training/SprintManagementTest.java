@@ -96,7 +96,6 @@ public class SprintManagementTest {
 		this.ds.getDriverProperties().setProperty("user", "sa");
 		this.ds.getDriverProperties().setProperty("password", "sasa");
 		this.ds.init();
-		
         this.listener = new ReqsCompletedListener();
     }
 	
@@ -676,6 +675,11 @@ public class SprintManagementTest {
 					" r where r.commandName = :cmdClassName and r.status not like 'DONE'").
 					setParameter("cmdClassName", cmdClassName).getResultList();
 			size = result.size();
+                        System.out.println("Found " + size + " waiting requests. Waiting...");
+                        if (size > 0) {
+                            RequestInfo rinfo = (RequestInfo) result.iterator().next();
+                            System.out.println("Next pending request info status = " + rinfo.getStatus());
+			}
 		}
 	}
 	

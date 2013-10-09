@@ -11,8 +11,8 @@
   <properties>
     <drools.version.5>5.5.0.Final</drools.version.5>
     <jbpm.version.5>5.4.0.Final</jbpm.version.5>
-    <drools.version.6>6.0.0.CR3</drools.version.6>
-    <jbpm.version.6>6.0.0.CR3</jbpm.version.6>
+    <drools.version.6>6.0.0.CR4</drools.version.6>
+    <jbpm.version.6>6.0.0.CR4</jbpm.version.6>
   </properties>
 
   <modules>
