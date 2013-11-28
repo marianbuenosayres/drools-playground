@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -19,17 +17,8 @@ import org.drools.core.io.impl.ClassPathResource;
 import org.drools.core.time.impl.PseudoClockScheduler;
 import org.jbpm.process.core.timer.TimerServiceRegistry;
 import org.jbpm.services.task.HumanTaskServiceFactory;
-import org.jbpm.services.task.deadlines.DeadlinesDecorator;
-import org.jbpm.services.task.deadlines.notifications.impl.MockNotificationListener;
-import org.jbpm.services.task.identity.UserGroupLifeCycleManagerDecorator;
-import org.jbpm.services.task.identity.UserGroupTaskInstanceServiceDecorator;
-import org.jbpm.services.task.identity.UserGroupTaskQueryServiceDecorator;
-import org.jbpm.services.task.impl.TaskInstanceServiceImpl;
-import org.jbpm.services.task.impl.TaskServiceEntryPointImpl;
-import org.jbpm.services.task.subtask.SubTaskDecorator;
 import org.jbpm.services.task.wih.NonManagedLocalHTWorkItemHandler;
 import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
-import org.jbpm.shared.services.impl.events.JbpmServicesEventImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,10 +38,6 @@ import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.event.KnowledgeRuntimeEventManager;
 import org.kie.internal.logger.KnowledgeRuntimeLogger;
 import org.kie.internal.logger.KnowledgeRuntimeLoggerFactory;
-import org.kie.internal.task.api.TaskInstanceService;
-import org.kie.internal.task.api.TaskQueryService;
-import org.kie.internal.task.api.UserGroupCallback;
-import org.kie.internal.task.api.model.NotificationEvent;
 
 import bitronix.tm.resource.jdbc.PoolingDataSource;
 
@@ -65,7 +50,6 @@ public class EscalationProcessTest {
     
     //private DefaultEscalatedDeadlineHandler defaultEscalatedDeadlineHandler;
     private NonManagedLocalHTWorkItemHandler humanTaskHandler;
-	private MockNotificationListener notificationsListener;
     
     @Before
     public void setup() throws IOException{
@@ -79,7 +63,6 @@ public class EscalationProcessTest {
 		this.ds.getDriverProperties().setProperty("password", "sasa");
 		this.ds.init();
 
-		this.notificationsListener = new MockNotificationListener();
 		this.ksession = this.createKSession();
         this.taskService = this.createTaskService();
         
@@ -192,47 +175,9 @@ public class EscalationProcessTest {
 		userGroupCallback.addUser("mary", "operators");
 		userGroupCallback.addUser("boss", "mgmt");
 		userGroupCallback.addUser("Administrator", "mgmt", "operators");
-		HumanTaskServiceFactory.setEntityManagerFactory(emf);
-		HumanTaskServiceFactory.setJbpmServicesTransactionManager(new JbpmJTATransactionManager());
-	//	HumanTaskServiceFactory.getUserGroupLifeCycleDecorator().setUserGroupCallback(userGroupCallback);
-		TaskService taskService = HumanTaskServiceFactory.newTaskService();
-		TaskServiceEntryPointImpl taskServiceImpl = (TaskServiceEntryPointImpl) taskService;
-		taskServiceImpl.registerTaskNotificationEventListener(new MockEventListener(this.notificationsListener));
-		setUserGroupCallback(userGroupCallback, taskServiceImpl);
-		return taskService;
+		return HumanTaskServiceFactory.newTaskServiceConfigurator().
+			entityManagerFactory(emf).
+			userGroupCallback(userGroupCallback).
+			transactionManager(new JbpmJTATransactionManager()).getTaskService();
 	}
-
-    @SuppressWarnings({"unchecked", "serial"})
-	private void setUserGroupCallback(UserGroupCallback userGroupCallback, TaskServiceEntryPointImpl taskServiceImpl) {
-		TaskInstanceService instanceService = taskServiceImpl.getTaskInstanceService();
-		TaskQueryService queryService = taskServiceImpl.getTaskQueryService();
-		UserGroupTaskQueryServiceDecorator queryDecorator = (UserGroupTaskQueryServiceDecorator) queryService;
-		queryDecorator.setUserGroupCallback(userGroupCallback);
-		DeadlinesDecorator instanceServiceImpl = (DeadlinesDecorator) instanceService;
-		try {
-			java.lang.reflect.Field instanceField = DeadlinesDecorator.class.getDeclaredField("instanceService");
-			instanceField.setAccessible(true);
-			SubTaskDecorator subTaskDecorator = (SubTaskDecorator) instanceField.get(instanceServiceImpl);
-			java.lang.reflect.Field subInstanceField = SubTaskDecorator.class.getDeclaredField("instanceService");
-			subInstanceField.setAccessible(true);
-			UserGroupTaskInstanceServiceDecorator userGroupDecorator = (UserGroupTaskInstanceServiceDecorator) subInstanceField.get(subTaskDecorator);
-			userGroupDecorator.setUserGroupCallback(userGroupCallback);
-			java.lang.reflect.Field subSubInstanceField = UserGroupTaskInstanceServiceDecorator.class.getDeclaredField("delegate");
-			subSubInstanceField.setAccessible(true);
-			TaskInstanceServiceImpl taskInstanceImpl = (TaskInstanceServiceImpl) subSubInstanceField.get(userGroupDecorator);
-			java.lang.reflect.Field lcmField = TaskInstanceServiceImpl.class.getDeclaredField("lifeCycleManager");
-			lcmField.setAccessible(true);
-			UserGroupLifeCycleManagerDecorator lfManager = (UserGroupLifeCycleManagerDecorator) lcmField.get(taskInstanceImpl);
-			lfManager.setUserGroupCallback(userGroupCallback);
-			//more to do with Observes registration events that anything else, but here for simplicity
-			java.lang.reflect.Field notifField = TaskServiceEntryPointImpl.class.getDeclaredField("taskNotificationEvents");
-			notifField.setAccessible(true);
-			JbpmServicesEventImpl<NotificationEvent> listener = (JbpmServicesEventImpl<NotificationEvent>) notifField.get(taskServiceImpl);
-			listener.select(new AnnotationLiteral<Observes>(){});
-		} catch (Exception e) {
-			throw new RuntimeException("Couldn't set user group callback", e);
-		}
-	}
-    
-    
 }

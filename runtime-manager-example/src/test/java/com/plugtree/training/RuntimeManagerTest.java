@@ -102,9 +102,11 @@ public class RuntimeManagerTest {
         
         // close manager which will close session maintained by the manager
         manager.close();
-        
-        runtime = manager.getRuntimeEngine(EmptyContext.get());
-        Assert.assertNull(runtime);
+        try {
+            runtime = manager.getRuntimeEngine(EmptyContext.get());
+            Assert.fail("Shouldn't allow for closed RuntimeManager to succeed");
+        } catch (Exception e) {
+        }
     }
 	
 	@Test
