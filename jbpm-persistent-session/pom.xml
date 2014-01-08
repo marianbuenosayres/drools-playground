@@ -15,25 +15,21 @@
     <name>jBPM training :: Persistence Example</name>
     <url>http://www.plugtree.com</url>
 
-    <properties>
-        <jbpm.version>${jbpm.version.6}</jbpm.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-persistence-jpa</artifactId>
-            <version>${jbpm.version}</version>
+            <version>${kie.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-bpmn2</artifactId>
-            <version>${jbpm.version}</version>
+            <version>${kie.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-audit</artifactId>
-            <version>${jbpm.version}</version>
+            <version>${kie.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
