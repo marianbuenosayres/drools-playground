@@ -9,31 +9,25 @@
   <name>Drools &amp; jBPM Training</name>
 
   <properties>
-    <drools.version.5>5.5.0.Final</drools.version.5>
-    <jbpm.version.5>5.4.0.Final</jbpm.version.5>
-    <drools.version.6>6.0.0.CR4</drools.version.6>
-    <jbpm.version.6>6.0.0.CR4</jbpm.version.6>
+    <kie.version>6.0.1.Final</kie.version>
   </properties>
 
   <modules>
-    <module>droolsjbpm5-quickstart</module>
     <module>droolsjbpm6-quickstart</module>
-    <module>drools5-introduction</module>
+    <module>drools6-introduction</module>
     <module>conditional-elements</module>
     <module>rule-attributes</module>
-    <module>drools6-introduction</module>
     <module>backward-chaining</module>
     <module>drools-decisiontables-example</module>
     <module>drools-dsl-example</module>
-    <module>optaplanner-example</module>
     <module>custom-operators</module>
     <module>spring-camel-integration</module>
     <module>drools6-kiesession</module>
     <module>drools6-kiesession-from-files</module>
     <module>drools6-named-kiesession</module>
     <module>drools6-cdi-kiesession</module>
-    <module>jbpm5-introduction</module>
     <module>jbpm6-introduction</module>
+    <module>bpmn2-scenarios</module>
     <module>drools-persistent-session</module>
     <module>jbpm-persistent-session</module>
     <module>persistence-homework-results</module>
@@ -43,7 +37,7 @@
     <module>emergency-service-case</module>
     <module>domain-specific-processes-homework</module>
     <module>runtime-manager-example</module>
-    <module>jms-task-service-example</module>
+    <!--module>jbpm-rest-example</module --><!--TODO ADD THIS MODULE -->
     <module>sprint-management-case</module>
     <module>sprint-management-case-cdi</module>
   </modules>
