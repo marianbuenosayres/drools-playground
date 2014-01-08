@@ -8,13 +8,9 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>bpmn2-demo</artifactId>
+  <artifactId>bpmn2-scenarios</artifactId>
   <name>BPMN2 test Scenarios</name>
   <url>http://plugtree.com</url>
-
-  <properties>
-    <jbpm.version>${jbpm.version.5}</jbpm.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -33,17 +29,17 @@
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-flow</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-flow-builder</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-bpmn2</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
   </dependencies>
 

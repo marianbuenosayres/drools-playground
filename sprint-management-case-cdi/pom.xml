@@ -12,11 +12,6 @@
   <name>Use case: Sprint Management (CDI)</name>
   <url>http://plugtree.com</url>
 
-  <properties>
-    <jbpm.version>${jbpm.version.6}</jbpm.version>
-    <drools.version>${drools.version.6}</drools.version>
-  </properties>
-
   <dependencies>
     <!-- Test dependencies -->
     <dependency>
@@ -47,29 +42,29 @@
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-flow</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-flow-builder</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-bpmn2</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <!-- Executor dependency -->
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-runtime-manager</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <!-- Task service dependency -->
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-human-task-core</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <!-- JPA dependencies -->
     <dependency>
@@ -115,7 +110,7 @@
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-kie-services</artifactId>
-      <version>${jbpm.version}</version>
+      <version>${kie.version}</version>
     </dependency>
   </dependencies>
 

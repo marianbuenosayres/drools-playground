@@ -15,15 +15,11 @@
     <name>Drools training :: Persistence Example</name>
     <url>http://www.plugtree.com</url>
 
-    <properties>
-        <drools.version>${drools.version.6}</drools.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-persistence-jpa</artifactId>
-            <version>${drools.version}</version>
+            <version>${kie.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>

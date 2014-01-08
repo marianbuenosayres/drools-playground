@@ -15,20 +15,16 @@
     <name>jBPM training :: Human Task Service Example</name>
     <url>http://www.plugtree.com</url>
 
-    <properties>
-        <jbpm.version>${jbpm.version.6}</jbpm.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-human-task-core</artifactId>
-            <version>${jbpm.version}</version>
+            <version>${kie.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jbpm</groupId>
             <artifactId>jbpm-runtime-manager</artifactId>
-            <version>${jbpm.version}</version>
+            <version>${kie.version}</version>
         </dependency>
         <!-- Test dependencies -->
         <dependency>

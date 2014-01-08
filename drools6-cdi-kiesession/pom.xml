@@ -12,10 +12,6 @@
   <artifactId>drools6-cdi-kiesession</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <drools.version>${drools.version.6}</drools.version>
-  </properties>
-
   <name>Drools6 CDI Example</name>
   <url>http://www.plugtree.com</url>
 
@@ -23,12 +19,12 @@
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-api</artifactId>
-      <version>${drools.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-compiler</artifactId>
-      <version>${drools.version}</version>
+      <version>${kie.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.enterprise</groupId>
