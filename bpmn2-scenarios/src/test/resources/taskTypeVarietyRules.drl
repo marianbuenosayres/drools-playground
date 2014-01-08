@@ -1,4 +1,4 @@
-import org.drools.runtime.process.WorkflowProcessInstance;
+import org.kie.api.runtime.process.WorkflowProcessInstance;
 
 rule "input of at least 100 gets a message"
 ruleflow-group "task-type-variety-rules"

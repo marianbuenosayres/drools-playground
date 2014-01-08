@@ -1,51 +1,50 @@
 package com.plugtree.training;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.drools.io.ResourceFactory;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+
 import com.plugtree.training.enums.CustomerType;
 import com.plugtree.training.enums.ShippingType;
 import com.plugtree.training.model.Customer;
 import com.plugtree.training.model.Order;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 public class DSLExampleTest {
 
-	private StatefulKnowledgeSession ksession;
+	private KieSession ksession;
 	private List<Order> rejectedNational = new ArrayList<Order>();
 	private List<Order> rejectedInternational = new ArrayList<Order>();
 	private List<Order> priorityCustomer = new ArrayList<Order>();
-        @Before
+    
+	@Before
 	public void setUp() throws Exception {
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(new ClassPathResource("/rules/CustomLanguage.dsl", getClass()), ResourceType.DSL);
-		kbuilder.add(new ClassPathResource("/rules/Rules.dslr", getClass()), ResourceType.DSLR);
-		KnowledgeBuilderErrors errors = kbuilder.getErrors();
-		if (errors.size() > 0) {
-			for (KnowledgeBuilderError error : errors) {
-				System.err.println(error);
-			}
+        KieServices ks = KieServices.Factory.get();
+        KieFileSystem kfs = ks.newKieFileSystem();
+        kfs.write("src/main/resources/custom-lang.dsl", ResourceFactory.newClassPathResource("rules/CustomLanguage.dsl"));
+        kfs.write("src/main/resources/rules.dslr", ResourceFactory.newClassPathResource("rules/Rules.dslr"));
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
+        System.out.println("Compiling resources");
+        kbuilder.buildAll();
+		if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+			System.err.println(kbuilder.getResults());
 			throw new IllegalArgumentException("Could not parse knowledge.");
 		}
-		KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-		kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-		ksession = kbase.newStatefulKnowledgeSession();
-                // KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
+		KieContainer kcontainer = ks.newKieContainer(kbuilder.getKieModule().getReleaseId());
+		ksession = kcontainer.newKieSession();
+		// KieRuntimeLogger logger = ks.getLoggers().newConsoleLogger((KieRuntimeEventManager) ksession);
 	}
-        @Test
+	
+    @Test
 	public void testExecution() {
 
 		Customer johnInternational = new Customer("John Z", CustomerType.INTERNATIONAL);

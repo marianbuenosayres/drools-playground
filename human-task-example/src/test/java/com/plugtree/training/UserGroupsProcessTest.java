@@ -14,7 +14,6 @@ import javax.persistence.Persistence;
 import org.drools.core.io.impl.ClassPathResource;
 import org.jbpm.services.task.HumanTaskServiceFactory;
 import org.jbpm.services.task.wih.NonManagedLocalHTWorkItemHandler;
-import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -138,7 +137,7 @@ public class UserGroupsProcessTest {
 		userGroupCallback.addUser(userId, roles);
 		return HumanTaskServiceFactory.newTaskServiceConfigurator()
 			.entityManagerFactory(emf)
-			.transactionManager(new JbpmJTATransactionManager())
+			//.transactionManager(new JbpmJTATransactionManager())
 			.userGroupCallback(userGroupCallback)
 			.getTaskService();
     }

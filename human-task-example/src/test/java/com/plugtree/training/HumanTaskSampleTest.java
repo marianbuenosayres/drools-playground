@@ -12,7 +12,6 @@ import javax.persistence.Persistence;
 
 import org.jbpm.services.task.HumanTaskServiceFactory;
 import org.jbpm.services.task.wih.NonManagedLocalHTWorkItemHandler;
-import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +65,7 @@ public class HumanTaskSampleTest {
 		userGroupCallback.addUser("Administrator", "writer", "translator", "users");
 		//start taskService
 		TaskService taskService =HumanTaskServiceFactory.newTaskServiceConfigurator()
-			.transactionManager(new JbpmJTATransactionManager())
+			//.transactionManager(new JbpmJTATransactionManager())
 			.entityManagerFactory(emf)
 			.userGroupCallback(userGroupCallback)
 			.getTaskService();
