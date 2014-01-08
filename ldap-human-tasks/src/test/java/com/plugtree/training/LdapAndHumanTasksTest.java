@@ -15,7 +15,6 @@ import org.drools.core.io.impl.ClassPathResource;
 import org.jbpm.services.task.HumanTaskServiceFactory;
 import org.jbpm.services.task.identity.LDAPUserGroupCallbackImpl;
 import org.jbpm.services.task.wih.NonManagedLocalHTWorkItemHandler;
-import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +72,7 @@ public class LdapAndHumanTasksTest {
     public void testProcessWithHumanTasks() throws InterruptedException {
 
     	//make sure users exist
-    	LDAPUserGroupCallbackImpl userGroupCallback = new LDAPUserGroupCallbackImpl();
+    	LDAPUserGroupCallbackImpl userGroupCallback = new LDAPUserGroupCallbackImpl(true);
     	Assert.assertTrue(userGroupCallback.existsUser("john"));
     	Assert.assertTrue(userGroupCallback.existsUser("louis"));
     	Assert.assertTrue(userGroupCallback.existsUser("mary"));
@@ -140,10 +139,9 @@ public class LdapAndHumanTasksTest {
 		// Create the task service 
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.jbpm.services.task");
 		// Create LDAP user group callback
-		LDAPUserGroupCallbackImpl userGroupCallback = new LDAPUserGroupCallbackImpl();
+		LDAPUserGroupCallbackImpl userGroupCallback = new LDAPUserGroupCallbackImpl(true);
 		//start taskService
 		TaskService taskService = HumanTaskServiceFactory.newTaskServiceConfigurator()
-			.transactionManager(new JbpmJTATransactionManager())
 			.entityManagerFactory(emf)
 			.userGroupCallback(userGroupCallback)
 			.getTaskService();

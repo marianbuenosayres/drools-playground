@@ -1,16 +1,12 @@
 package com.plugtree.training;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import org.jbpm.services.task.HumanTaskServiceFactory;
 import org.jbpm.services.task.wih.NonManagedLocalHTWorkItemHandler;
-import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,7 +18,6 @@ import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.runtime.process.WorkflowProcessInstance;
 import org.kie.api.task.TaskService;
-import org.kie.api.task.model.Status;
 import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.task.api.model.InternalTask;
 
@@ -63,7 +58,6 @@ public class HtHomeworkTest {
 		userGroupCallback.addUser("Administrator", "users");
 		//start taskService
 		TaskService taskService =HumanTaskServiceFactory.newTaskServiceConfigurator()
-			.transactionManager(new JbpmJTATransactionManager())
 			.entityManagerFactory(emf)
 			.userGroupCallback(userGroupCallback)
 			.getTaskService();
