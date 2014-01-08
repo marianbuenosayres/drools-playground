@@ -1,56 +1,49 @@
 package com.plugtree.training.expert;
 
+import org.drools.decisiontable.InputType;
+import org.drools.decisiontable.SpreadsheetCompiler;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.io.ResourceFactory;
+
 import com.plugtree.training.enums.CreditStatus;
 import com.plugtree.training.model.Job;
 import com.plugtree.training.model.Person;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.DecisionTableConfiguration;
-import org.drools.builder.DecisionTableInputType;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.decisiontable.InputType;
-import org.drools.decisiontable.SpreadsheetCompiler;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 public class SpreadsheetExampleTest  {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
 
     @Before
     public void setUp() throws Exception {
-        DecisionTableConfiguration dtableconfiguration = KnowledgeBuilderFactory.newDecisionTableConfiguration();
-        dtableconfiguration.setInputType(DecisionTableInputType.XLS);
+    	KieServices ks = KieServices.Factory.get();
+    	
+        KieFileSystem kfs = ks.newKieFileSystem();
+        kfs.write("src/main/resources/Credit-Rules.xls", ResourceFactory.newClassPathResource("rules/CreditRules.xls"));
 
-        
+        //See the generated rules from the spreadsheet
         SpreadsheetCompiler compiler = new SpreadsheetCompiler();
         String drl = compiler.compile("/rules/CreditRules.xls", InputType.XLS);
         System.out.println("DRL String:"+drl);
-        
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        kbuilder.add(new ClassPathResource("/rules/CreditRules.xls", getClass()), ResourceType.DTABLE, dtableconfiguration);
-        KnowledgeBuilderErrors errors = kbuilder.getErrors();
-        if (errors.size() > 0) {
-            for (KnowledgeBuilderError error : errors) {
-                System.err.println(error);
-            }
+
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
+        System.out.println("Compiling rules");
+        kbuilder.buildAll();
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.err.println(kbuilder.getResults());
             throw new IllegalArgumentException("Could not parse knowledge.");
         }
-
-    
-//        
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-        ksession = kbase.newStatefulKnowledgeSession();
-        //KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
+        
+        KieContainer kcontainer = ks.newKieContainer(kbuilder.getKieModule().getReleaseId());
+        ksession = kcontainer.newKieSession();
+        //KieRuntimeLogger logger = ks.getLoggers().newConsoleLogger((KieRuntimeEventManager) ksession);
     }
     @Test
     public void testExecution() {

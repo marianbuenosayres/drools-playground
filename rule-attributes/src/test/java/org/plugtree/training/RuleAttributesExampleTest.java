@@ -4,62 +4,61 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.event.rule.AfterActivationFiredEvent;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-
-import org.drools.event.rule.DefaultAgendaEventListener;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.event.KieRuntimeEventManager;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.io.ResourceFactory;
 import org.plugtree.training.model.Artist;
 import org.plugtree.training.model.Playlist;
 import org.plugtree.training.model.Song;
 
 public class RuleAttributesExampleTest {
 
-    private StatefulKnowledgeSession createKSession(String drlFile, final List firedRules) throws Exception {
+    private KieSession createKieSession(String drlFile, final List<String> firedRules) throws Exception {
+    	KieServices ks = KieServices.Factory.get();
+    	KieFileSystem kfs = ks.newKieFileSystem();
+    	kfs.write("src/main/resources/rules/my-file.drl", ResourceFactory.newClassPathResource(drlFile));
+    	
+    	KieBuilder kbuilder = ks.newKieBuilder(kfs);
+    	System.out.println("Compiling resources");
+    	kbuilder.buildAll();
 
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        kbuilder.add(new ClassPathResource(drlFile, getClass()), ResourceType.DRL);
-        KnowledgeBuilderErrors errors = kbuilder.getErrors();
-        if (errors.size() > 0) {
-            for (KnowledgeBuilderError error : errors) {
-                System.err.println(error);
-            }
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.err.println(kbuilder.getResults());
             throw new IllegalArgumentException("Could not parse knowledge.");
         }
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-        StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
-        KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
-
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        KieSession ksession = kcontainer.newKieSession();
+        ks.getLoggers().newConsoleLogger((KieRuntimeEventManager) ksession);
+    	
         if (firedRules != null) {
             ksession.addEventListener(new DefaultAgendaEventListener() {
-
                 @Override
-                public void afterActivationFired(AfterActivationFiredEvent event) {
-                    firedRules.add(event.getActivation().getRule().getName());
+                public void afterMatchFired(AfterMatchFiredEvent event) {
+                    firedRules.add(event.getMatch().getRule().getName());
                 }
             });
         }
-
         return ksession;
     }
+    
     @Test
     public void noLoop() throws Exception {
 
         Playlist pl = this.createFullPlaylist();
 
-        StatefulKnowledgeSession ksession = this.createKSession("/rules/NoLoopRules.drl", null);
+        KieSession ksession = this.createKieSession("rules/NoLoopRules.drl", null);
 
         ksession.setGlobal("index", new AtomicInteger(1));
 
@@ -83,7 +82,7 @@ public class RuleAttributesExampleTest {
 
         Playlist pl = this.createFullPlaylist();
 
-        StatefulKnowledgeSession ksession = this.createKSession("/rules/LockOnActiveRules.drl", null);
+        KieSession ksession = this.createKieSession("rules/LockOnActiveRules.drl", null);
 
         ksession.setGlobal("index", new AtomicInteger(1));
 
@@ -108,7 +107,7 @@ public class RuleAttributesExampleTest {
 
         List<String> firedRules = new ArrayList<String>();
 
-        StatefulKnowledgeSession ksession = this.createKSession("/rules/AgendaGroupRules.drl", firedRules);
+        KieSession ksession = this.createKieSession("rules/AgendaGroupRules.drl", firedRules);
 
         Playlist playlist = new Playlist("Good playlist");
         ksession.setGlobal("index", new AtomicInteger(1));

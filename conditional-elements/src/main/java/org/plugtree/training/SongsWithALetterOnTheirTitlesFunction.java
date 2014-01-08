@@ -11,7 +11,8 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.drools.base.accumulators.AccumulateFunction;
+
+import org.kie.api.runtime.rule.AccumulateFunction;
 import org.plugtree.training.model.Song;
 
 /**
@@ -19,7 +20,7 @@ import org.plugtree.training.model.Song;
  * @author esteban.aliverti@gmail.com
  * @author salaboy
  */
-public class SongsWithALetterOnTheirTitlesFunction implements AccumulateFunction{
+public class SongsWithALetterOnTheirTitlesFunction implements AccumulateFunction {
 
     @Override
     public Class<?> getResultType() {

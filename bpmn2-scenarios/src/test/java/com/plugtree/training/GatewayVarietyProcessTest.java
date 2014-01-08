@@ -3,55 +3,55 @@ package com.plugtree.training;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.internal.io.ResourceFactory;
 
 public class GatewayVarietyProcessTest {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
 
     /**
      * Creates a ksession from a kbase containing process definition
      * @return 
      */
-    public StatefulKnowledgeSession createKnowledgeSession() {
-        //Create the kbuilder
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+    public KieSession createKieSession() {
+    	
+    	KieServices ks = KieServices.Factory.get();
+    	//Create file system
+    	KieFileSystem kfs = ks.newKieFileSystem();
+    	//Add simpleProcess.bpmn to kfs
+    	kfs.write("src/main/resources/gatewayVarietyProcess.bpmn2", ResourceFactory.newClassPathResource("gatewayVarietyProcess.bpmn2"));
+    	//Create builder for the file system
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
 
-        //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("gatewayVarietyProcess.bpmn2"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
+        kbuilder.buildAll();
         
         //Check for errors
-        if (kbuilder.hasErrors()) {
-            if (kbuilder.getErrors().size() > 0) {
-                for (KnowledgeBuilderError error : kbuilder.getErrors()) {
-                    System.out.println("Error building kbase: " + error.getMessage());
-                }
-            }
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.out.println(kbuilder.getResults());
             throw new RuntimeException("Error building kbase!");
         }
-
-        //Create a knowledge base and add the generated package
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        //return a new stateful session
-        return kbase.newStatefulKnowledgeSession();
+        //Create a module for the jar and a container for its knowledge bases and sessions
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        //Create a kie session from the kcontainer
+        return kcontainer.newKieSession();
     }
 
     @Test
     public void gatewayVarietyProcessTest(){
-        this.ksession = this.createKnowledgeSession();
+        this.ksession = this.createKieSession();
         
     	//Start the process using its id
     	Map<String, Object> variables = new HashMap<String, Object>();

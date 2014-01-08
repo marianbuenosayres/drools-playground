@@ -1,47 +1,47 @@
 package com.plugtree.training;
 
 import java.io.IOException;
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message.Level;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.internal.io.ResourceFactory;
 
 public class SingleEventProcessTest {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
     
     @Before
     public void setup() throws IOException{
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+    	KieServices ks = KieServices.Factory.get();
+    	KieFileSystem kfs = ks.newKieFileSystem();
 
-        //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("singleEventProcess.bpmn2"), ResourceType.BPMN2);
+    	//Add contents to the file system
+    	kfs.write("src/main/resources/singleEventProcess.bpmn2", ResourceFactory.newClassPathResource("singleEventProcess.bpmn2"));
+        
+        //Create the kbuilder
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
         System.out.println("Compiling resources");
+        kbuilder.buildAll();
         
         //Check for errors
-        if (kbuilder.hasErrors()) {
-            if (kbuilder.getErrors().size() > 0) {
-                for (KnowledgeBuilderError error : kbuilder.getErrors()) {
-                    System.out.println("Error building kbase: " + error.getMessage());
-                }
-            }
+        if (kbuilder.getResults().hasMessages(Level.ERROR)) {
+            System.out.println("Error building kbase: " + kbuilder.getResults());
             throw new RuntimeException("Error building kbase!");
         }
+        //Create a knowledge module and a container to access its bases and sessions
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
 
-        //Create a knowledge base and add the generated package
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        //return a new statefull session
-        this.ksession = kbase.newStatefulKnowledgeSession();
+        this.ksession = kcontainer.newKieSession();
     }
 
     @Test

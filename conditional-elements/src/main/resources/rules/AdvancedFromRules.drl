@@ -2,6 +2,8 @@ package org.plugtree.training
 
 import org.plugtree.training.model.*
 
+import accumulate org.plugtree.training.SongsWithALetterOnTheirTitlesFunction songsWithALetterOnTheirTitlesFunction
+
 global org.hibernate.Session session;
 global java.util.List list;
 global java.util.List songsFromThe80s;

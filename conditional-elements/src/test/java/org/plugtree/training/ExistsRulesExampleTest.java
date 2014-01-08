@@ -2,54 +2,53 @@ package org.plugtree.training;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
 
-import org.drools.event.rule.AfterActivationFiredEvent;
-import org.drools.event.rule.DefaultAgendaEventListener;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.event.rule.AfterMatchFiredEvent;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.io.ResourceFactory;
 import org.plugtree.training.model.Artist;
 import org.plugtree.training.model.Playlist;
 import org.plugtree.training.model.Song;
 
 public class ExistsRulesExampleTest  {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
     private final List<String> firedRules = new ArrayList<String>();
 
     @Before
     public void setUp() throws Exception {
-        
+    	
+    	KieServices ks = KieServices.Factory.get();
+    	KieFileSystem kfs = ks.newKieFileSystem();
+    	kfs.write("src/main/resources/rules/ExistsRules.drl", ResourceFactory.newClassPathResource("rules/ExistsRules.drl"));
+    	
+    	KieBuilder kbuilder = ks.newKieBuilder(kfs);
+    	System.out.println("Compiling resources");
+    	kbuilder.buildAll();
 
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        kbuilder.add(new ClassPathResource("/rules/ExistsRules.drl", getClass()), ResourceType.DRL);
-        KnowledgeBuilderErrors errors = kbuilder.getErrors();
-        if (errors.size() > 0) {
-            for (KnowledgeBuilderError error : errors) {
-                System.err.println(error);
-            }
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.err.println(kbuilder.getResults());
             throw new IllegalArgumentException("Could not parse knowledge.");
         }
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-        ksession = kbase.newStatefulKnowledgeSession();
-        //KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
-
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        ksession = kcontainer.newKieSession();
+        
         ksession.addEventListener(new DefaultAgendaEventListener() {
-
             @Override
-            public void afterActivationFired(AfterActivationFiredEvent event) {
-                firedRules.add(event.getActivation().getRule().getName());
+            public void afterMatchFired(AfterMatchFiredEvent event) {
+                firedRules.add(event.getMatch().getRule().getName());
             }
         });
     }

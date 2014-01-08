@@ -2,39 +2,41 @@ package com.plugtree.training;
 
 import java.io.File;
 import java.io.IOException;
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.logger.KnowledgeRuntimeLogger;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkflowProcessInstance;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message.Level;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.api.runtime.process.WorkflowProcessInstance;
+import org.kie.internal.event.KnowledgeRuntimeEventManager;
+import org.kie.internal.io.ResourceFactory;
+import org.kie.internal.logger.KnowledgeRuntimeLogger;
+import org.kie.internal.logger.KnowledgeRuntimeLoggerFactory;
 
 public class SingleEventProcessWithDataTest {
 
     private KnowledgeRuntimeLogger fileLogger;
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
     
     @Before
     public void setup() throws IOException{
-        this.ksession = this.createKnowledgeSession();
+        this.ksession = this.createKieSession();
         
         //Console log. Try to analyze it first
-        KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
+        KnowledgeRuntimeLoggerFactory.newConsoleLogger((KnowledgeRuntimeEventManager) ksession);
         
         //File logger: try to open its output using Audit View in eclipse
         File logFile = File.createTempFile("process-output", "");
         System.out.println("Log file= "+logFile.getAbsolutePath()+".log");
-        fileLogger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession,logFile.getAbsolutePath());
+        fileLogger = KnowledgeRuntimeLoggerFactory.newFileLogger((KnowledgeRuntimeEventManager) ksession,logFile.getAbsolutePath());
     }
 
     @After
@@ -88,29 +90,29 @@ public class SingleEventProcessWithDataTest {
      * Creates a ksession from a kbase containing process definition
      * @return 
      */
-    public StatefulKnowledgeSession createKnowledgeSession() {
-        //Create the kbuilder
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+    public KieSession createKieSession() {
+    	
+    	KieServices ks = KieServices.Factory.get();
+    	KieFileSystem kfs = ks.newKieFileSystem();
 
-        //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("singleEventProcessWithData.bpmn2"), ResourceType.BPMN2);
+    	//Add contents to the file system
+    	kfs.write("src/main/resources/singleEventProcessWithData.bpmn2", ResourceFactory.newClassPathResource("singleEventProcessWithData.bpmn2"));
+        
+        //Create the kbuilder
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
         System.out.println("Compiling resources");
+        kbuilder.buildAll();
         
         //Check for errors
-        if (kbuilder.hasErrors()) {
-            if (kbuilder.getErrors().size() > 0) {
-                for (KnowledgeBuilderError error : kbuilder.getErrors()) {
-                    System.out.println("Error building kbase: " + error.getMessage());
-                }
-            }
+        if (kbuilder.getResults().hasMessages(Level.ERROR)) {
+            System.out.println("Error building kbase: " + kbuilder.getResults());
             throw new RuntimeException("Error building kbase!");
         }
+        //Create a knowledge module and a container to access its bases and sessions
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
 
-        //Create a knowledge base and add the generated package
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        //return a new statefull session
-        return kbase.newStatefulKnowledgeSession();
+        //return a new session
+        return kcontainer.newKieSession();
     }
 }

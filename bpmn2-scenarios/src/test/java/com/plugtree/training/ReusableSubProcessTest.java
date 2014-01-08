@@ -2,31 +2,32 @@ package com.plugtree.training;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkflowProcessInstance;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.event.KieRuntimeEventManager;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.api.runtime.process.WorkflowProcessInstance;
+import org.kie.internal.io.ResourceFactory;
 
 public class ReusableSubProcessTest {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
     
     @Before
     public void setup() {
-        this.ksession = this.createKnowledgeSession();
+        this.ksession = this.createKieSession();
         
         //Console log. Try to analyze it first
-        KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
+        KieServices.Factory.get().getLoggers().newConsoleLogger((KieRuntimeEventManager) ksession);
     }
 
     @Test
@@ -56,30 +57,29 @@ public class ReusableSubProcessTest {
      * Creates a ksession from a kbase containing process definition
      * @return 
      */
-    public StatefulKnowledgeSession createKnowledgeSession(){
-        //Create the kbuilder
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+    public KieSession createKieSession(){
+    	KieServices ks = KieServices.Factory.get();
+    	//Create file system
+    	KieFileSystem kfs = ks.newKieFileSystem();
+    	//Add simpleProcess.bpmn to kfs
+    	kfs.write("src/main/resources/parentProcess.bpmn2", ResourceFactory.newClassPathResource("parentProcess.bpmn2"));
+    	kfs.write("src/main/resources/childProcess.bpmn2", ResourceFactory.newClassPathResource("childProcess.bpmn2"));
+    	//Create builder for the file system
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
 
-        //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("parentProcess.bpmn2"), ResourceType.BPMN2);
-        kbuilder.add(new ClassPathResource("childProcess.bpmn2"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
+        kbuilder.buildAll();
         
         //Check for errors
-        if (kbuilder.hasErrors()) {
-            if (kbuilder.getErrors().size() > 0) {
-                for (KnowledgeBuilderError error : kbuilder.getErrors()) {
-                    System.out.println("Error building kbase: " + error.getMessage());
-                }
-            }
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.out.println(kbuilder.getResults());
             throw new RuntimeException("Error building kbase!");
         }
-
-        //Create a knowledge base and add the generated package
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        //return a new statefull session
-        return kbase.newStatefulKnowledgeSession();
+        //Create a module for the jar and a container for its knowledge bases and sessions
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        //Create a kie session from the kcontainer
+        return kcontainer.newKieSession();
     }
 }

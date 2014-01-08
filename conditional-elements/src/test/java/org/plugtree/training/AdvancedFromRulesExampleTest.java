@@ -3,23 +3,20 @@ package org.plugtree.training;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-
-
-import org.drools.compiler.PackageBuilderConfiguration;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
 import org.hibernate.Session;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.event.KnowledgeRuntimeEventManager;
+import org.kie.internal.io.ResourceFactory;
+import org.kie.internal.logger.KnowledgeRuntimeLoggerFactory;
 import org.plugtree.training.model.Artist;
 import org.plugtree.training.model.Playlist;
 import org.plugtree.training.model.Song;
@@ -27,30 +24,27 @@ import org.plugtree.training.model.util.HibernateUtil;
 
 public class AdvancedFromRulesExampleTest {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
 
     @Before
     public void setUp() throws Exception {
-       
 
-        PackageBuilderConfiguration pkgConf = new PackageBuilderConfiguration();
-        pkgConf.addAccumulateFunction("songsWithALetterOnTheirTitlesFunction", SongsWithALetterOnTheirTitlesFunction.class);
-
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder(pkgConf);
-        kbuilder.add(new ClassPathResource("/rules/AdvancedFromRules.drl", getClass()), ResourceType.DRL);
-        KnowledgeBuilderErrors errors = kbuilder.getErrors();
-        if (errors.size() > 0) {
-            for (KnowledgeBuilderError error : errors) {
-                System.err.println(error);
-            }
+        KieServices ks = KieServices.Factory.get();
+        KieFileSystem kfs = ks.newKieFileSystem();
+        kfs.write("src/main/resources/AdvancedFromRules.drl", ResourceFactory.newClassPathResource("rules/AdvancedFromRules.drl"));
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
+        
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.err.println(kbuilder.getResults());
             throw new IllegalArgumentException("Could not parse knowledge.");
         }
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-        ksession = kbase.newStatefulKnowledgeSession();
-        KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        ksession = kcontainer.newKieSession();
+        KnowledgeRuntimeLoggerFactory.newConsoleLogger((KnowledgeRuntimeEventManager) ksession);
     }
+    
     @Test
     public void rulesActivation() {
         List<Playlist> playlists = this.createPlaylists();

@@ -1,18 +1,17 @@
 package com.plugtree.training.expert;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderErrors;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.logger.KnowledgeRuntimeLoggerFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.event.KieRuntimeEventManager;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.io.ResourceFactory;
 
 import com.plugtree.training.handsonlabs.enums.ItemType;
 import com.plugtree.training.handsonlabs.model.SpecialOffer;
@@ -20,43 +19,27 @@ import com.plugtree.training.handsonlabs.model.StockItem;
 
 public class SpreadsheetHandsOnLabsTest  {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
 
     @Before
     public void setUp() throws Exception {
-        
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-        kbuilder.add(new ClassPathResource("/rules/HandsOnLabsRules.drl", getClass()), ResourceType.DRL);
-    	
-    	
-//    	SpreadsheetCompiler compiler = new SpreadsheetCompiler();
-//	      String drl = compiler.compile("/04-DecisionTableSolution.xls", InputType.XLS);
-//	      System.out.println("DRL String:"+drl);
-//    	DecisionTableConfiguration dtableconfiguration = KnowledgeBuilderFactory.newDecisionTableConfiguration();
-//        dtableconfiguration.setInputType(DecisionTableInputType.XLS);
-//        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-//        kbuilder.add(new ClassPathResource("/04-DecisionTableSolution.xls", getClass()), ResourceType.DTABLE, dtableconfiguration);
-    	
-    	
-        KnowledgeBuilderErrors errors = kbuilder.getErrors();
-        if (errors.size() > 0) {
-            for (KnowledgeBuilderError error : errors) {
-                System.err.println(error);
-            }
-           throw new IllegalArgumentException("Could not parse knowledge.");
-        }
-        
-        
+    	KieServices ks = KieServices.Factory.get();
+    	KieFileSystem kfs = ks.newKieFileSystem();
+    	kfs.write("src/main/resources/rules/my-file.drl", ResourceFactory.newClassPathResource("rules/HandsOnLabsRules.drl"));
 
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-        ksession = kbase.newStatefulKnowledgeSession();
-        KnowledgeRuntimeLoggerFactory.newConsoleLogger(ksession);
-    }
-    
-    //@Test
-    public void nothing() {
-    	
+    	KieBuilder kbuilder = ks.newKieBuilder(kfs);
+    	System.out.println("Compiling resources");
+    	kbuilder.buildAll();
+
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.err.println(kbuilder.getResults());
+            throw new IllegalArgumentException("Could not parse knowledge.");
+        }
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        ksession = kcontainer.newKieSession();
+        ks.getLoggers().newConsoleLogger((KieRuntimeEventManager) ksession);
     }
     
     @Test

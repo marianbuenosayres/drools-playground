@@ -3,74 +3,73 @@ package com.plugtree.training;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.WorkingMemory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.event.ActivationCancelledEvent;
-import org.drools.event.ActivationCreatedEvent;
-import org.drools.event.AfterActivationFiredEvent;
-import org.drools.event.AgendaGroupPoppedEvent;
-import org.drools.event.AgendaGroupPushedEvent;
-import org.drools.event.BeforeActivationFiredEvent;
-import org.drools.event.RuleFlowGroupActivatedEvent;
-import org.drools.event.RuleFlowGroupDeactivatedEvent;
-import org.drools.impl.StatefulKnowledgeSessionImpl;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkItem;
-import org.drools.runtime.process.WorkItemHandler;
-import org.drools.runtime.process.WorkItemManager;
+import org.drools.core.WorkingMemory;
+import org.drools.core.event.ActivationCancelledEvent;
+import org.drools.core.event.ActivationCreatedEvent;
+import org.drools.core.event.AfterActivationFiredEvent;
+import org.drools.core.event.AgendaGroupPoppedEvent;
+import org.drools.core.event.AgendaGroupPushedEvent;
+import org.drools.core.event.BeforeActivationFiredEvent;
+import org.drools.core.event.RuleFlowGroupActivatedEvent;
+import org.drools.core.event.RuleFlowGroupDeactivatedEvent;
+import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message.Level;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.api.runtime.process.WorkItem;
+import org.kie.api.runtime.process.WorkItemHandler;
+import org.kie.api.runtime.process.WorkItemManager;
+import org.kie.internal.io.ResourceFactory;
 
 import com.plugtree.training.handler.HumanTaskMockHandler;
 
 public class TaskTypeVarietyProcessTest {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
 
     /**
      * Creates a ksession from a kbase containing process definition
      * @return 
      */
-    public StatefulKnowledgeSession createKnowledgeSession() {
-        //Create the kbuilder
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+    public KieSession createKieSession() {
+    	KieServices ks = KieServices.Factory.get();
+    	KieFileSystem kfs = ks.newKieFileSystem();
 
-        //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("taskTypeVarietyProcess.bpmn2"), ResourceType.BPMN2);
-        kbuilder.add(new ClassPathResource("taskTypeVarietyRules.drl"), ResourceType.DRL);
+    	//Add contents to the file system
+    	kfs.write("src/main/resources/taskTypeVarietyProcess.bpmn2", ResourceFactory.newClassPathResource("taskTypeVarietyProcess.bpmn2"));
+    	kfs.write("src/main/resources/taskTypeVarietyRules.drl", ResourceFactory.newClassPathResource("taskTypeVarietyRules.drl"));
+        
+        //Create the kbuilder
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
         System.out.println("Compiling resources");
+        kbuilder.buildAll();
         
         //Check for errors
-        if (kbuilder.hasErrors()) {
-            if (kbuilder.getErrors().size() > 0) {
-                for (KnowledgeBuilderError error : kbuilder.getErrors()) {
-                    System.out.println("Error building kbase: " + error.getMessage());
-                }
-            }
+        if (kbuilder.getResults().hasMessages(Level.ERROR)) {
+            System.out.println("Error building kbase: " + kbuilder.getResults());
             throw new RuntimeException("Error building kbase!");
         }
+        //Create a knowledge module and a container to access its bases and sessions
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
 
-        //Create a knowledge base and add the generated package
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        //return a new stateful session
-        return kbase.newStatefulKnowledgeSession();
+        //return a new session
+        return kcontainer.newKieSession();
     }
 
     @Test
     public void taskTypeVarietyProcessTest(){
-        this.ksession = this.createKnowledgeSession();
+        this.ksession = this.createKieSession();
         
         //BEGIN: REGISTER EVENT LISTENER TO FIRE RULES FOR BUSINESS RULE TASK TO WORK
-        final org.drools.event.AgendaEventListener agendaEventListener = new org.drools.event.AgendaEventListener() {
+        final org.drools.core.event.AgendaEventListener agendaEventListener = new org.drools.core.event.AgendaEventListener() {
             public void activationCreated(ActivationCreatedEvent event, WorkingMemory workingMemory){
                 ksession.fireAllRules();
             }
@@ -80,11 +79,11 @@ public class TaskTypeVarietyProcessTest {
             public void activationCancelled(ActivationCancelledEvent event, WorkingMemory workingMemory){ }
             public void beforeActivationFired(BeforeActivationFiredEvent event, WorkingMemory workingMemory) { }
             public void afterActivationFired(AfterActivationFiredEvent event, WorkingMemory workingMemory) { }
-            public void agendaGroupPopped(AgendaGroupPoppedEvent event, WorkingMemory workingMemory) { }
-            public void agendaGroupPushed(AgendaGroupPushedEvent event, WorkingMemory workingMemory) { }
             public void beforeRuleFlowGroupActivated(RuleFlowGroupActivatedEvent event, WorkingMemory workingMemory) { }
             public void beforeRuleFlowGroupDeactivated(RuleFlowGroupDeactivatedEvent event, WorkingMemory workingMemory) { }
             public void afterRuleFlowGroupDeactivated(RuleFlowGroupDeactivatedEvent event, WorkingMemory workingMemory) { }
+			public void agendaGroupPopped(AgendaGroupPoppedEvent event, WorkingMemory workingMemory) { }
+			public void agendaGroupPushed(AgendaGroupPushedEvent event, WorkingMemory workingMemory) { }
         };
         //adding it is a bit dirty for the time being, but it works:
         ((StatefulKnowledgeSessionImpl) ksession).session.addEventListener(agendaEventListener);

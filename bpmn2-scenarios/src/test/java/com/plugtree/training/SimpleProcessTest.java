@@ -1,57 +1,56 @@
 package com.plugtree.training;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.impl.ClassPathResource;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.process.ProcessInstance;
-import org.drools.runtime.process.WorkItem;
-import org.drools.runtime.process.WorkItemHandler;
-import org.drools.runtime.process.WorkItemManager;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
+import org.kie.api.builder.Message;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.api.runtime.process.WorkItem;
+import org.kie.api.runtime.process.WorkItemHandler;
+import org.kie.api.runtime.process.WorkItemManager;
+import org.kie.internal.io.ResourceFactory;
 
 public class SimpleProcessTest {
 
-    private StatefulKnowledgeSession ksession;
+    private KieSession ksession;
 
     /**
      * Creates a ksession from a kbase containing process definition
      * @return 
      */
-    public StatefulKnowledgeSession createKnowledgeSession() {
-        //Create the kbuilder
-        KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+    public KieSession createKieSession() {
+    	KieServices ks = KieServices.Factory.get();
+    	//Create file system
+    	KieFileSystem kfs = ks.newKieFileSystem();
+    	//Add simpleProcess.bpmn to kfs
+    	kfs.write("src/main/resources/simpleProcess.bpmn2", ResourceFactory.newClassPathResource("simpleProcess.bpmn2"));
+    	//Create builder for the file system
+        KieBuilder kbuilder = ks.newKieBuilder(kfs);
 
-        //Add simpleProcess.bpmn to kbuilder
-        kbuilder.add(new ClassPathResource("simpleProcess.bpmn2"), ResourceType.BPMN2);
         System.out.println("Compiling resources");
+        kbuilder.buildAll();
         
         //Check for errors
-        if (kbuilder.hasErrors()) {
-            if (kbuilder.getErrors().size() > 0) {
-                for (KnowledgeBuilderError error : kbuilder.getErrors()) {
-                    System.out.println("Error building kbase: " + error.getMessage());
-                }
-            }
+        if (kbuilder.getResults().hasMessages(Message.Level.ERROR)) {
+            System.out.println(kbuilder.getResults());
             throw new RuntimeException("Error building kbase!");
         }
-
-        //Create a knowledge base and add the generated package
-        KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-        kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-
-        //return a new stateful session
-        return kbase.newStatefulKnowledgeSession();
+        //Create a module for the jar and a container for its knowledge bases and sessions
+        KieModule kmodule = kbuilder.getKieModule();
+        KieContainer kcontainer = ks.newKieContainer(kmodule.getReleaseId());
+        
+        //Create a kie session from the kcontainer
+        return kcontainer.newKieSession();
     }
 
     @Test
     public void simpleProcessTest(){
-        this.ksession = this.createKnowledgeSession();
+        this.ksession = this.createKieSession();
     	//Register WorkItemManagers for all the generic tasks in the process
     	TestAsyncWorkItemHandler task11Handler = new TestAsyncWorkItemHandler();
         ksession.getWorkItemManager().registerWorkItemHandler("task1.1", task11Handler);
