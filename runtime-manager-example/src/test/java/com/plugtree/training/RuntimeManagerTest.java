@@ -15,9 +15,9 @@ import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
+import org.kie.api.runtime.manager.RuntimeManagerFactory;
 import org.kie.internal.io.ResourceFactory;
 import org.kie.internal.runtime.manager.RuntimeEnvironment;
-import org.kie.internal.runtime.manager.RuntimeManagerFactory;
 import org.kie.internal.runtime.manager.context.EmptyContext;
 import org.kie.internal.task.api.UserGroupCallback;
 
@@ -96,15 +96,18 @@ public class RuntimeManagerTest {
         Assert.assertEquals(sessionId, ksession.getId());
         // dispose session that should not have affect on the session at all
         manager.disposeRuntimeEngine(runtime);
-        
+
         ksession = manager.getRuntimeEngine(EmptyContext.get()).getKieSession();        
         Assert.assertEquals(sessionId, ksession.getId());
         
         // close manager which will close session maintained by the manager
         manager.close();
-        
-        runtime = manager.getRuntimeEngine(EmptyContext.get());
-        Assert.assertNull(runtime);
+
+        try {
+        	runtime = manager.getRuntimeEngine(EmptyContext.get());
+        	Assert.fail("Shouldn't succeed to return a runtime from an already closed manager");
+        } catch (IllegalStateException e) {
+        }
     }
 	
 	@Test

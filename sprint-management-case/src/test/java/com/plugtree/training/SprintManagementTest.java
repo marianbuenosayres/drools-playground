@@ -18,18 +18,12 @@ import org.drools.core.event.RuleFlowGroupActivatedEvent;
 import org.drools.core.impl.EnvironmentFactory;
 import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.drools.persistence.SingleSessionCommandService;
+import org.jbpm.executor.ExecutorServiceFactory;
 import org.jbpm.executor.entities.RequestInfo;
-import org.jbpm.executor.impl.ClassCacheManager;
-import org.jbpm.executor.impl.ExecutorImpl;
-import org.jbpm.executor.impl.ExecutorQueryServiceImpl;
-import org.jbpm.executor.impl.ExecutorRequestAdminServiceImpl;
-import org.jbpm.executor.impl.ExecutorRunnable;
-import org.jbpm.executor.impl.ExecutorServiceImpl;
-import org.jbpm.executor.impl.runtime.RuntimeManagerRegistry;
 import org.jbpm.executor.impl.wih.AsyncWorkItemHandler;
 import org.jbpm.process.audit.AuditLogService;
+import org.jbpm.process.audit.AuditLoggerFactory;
 import org.jbpm.process.audit.JPAAuditLogService;
-import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
 import org.jbpm.process.audit.ProcessInstanceLog;
 import org.jbpm.runtime.manager.impl.DefaultRegisterableItemsFactory;
 import org.jbpm.runtime.manager.impl.mapper.JPAMapper;
@@ -37,9 +31,6 @@ import org.jbpm.services.task.HumanTaskServiceFactory;
 import org.jbpm.services.task.identity.JBossUserGroupCallbackImpl;
 import org.jbpm.services.task.utils.ContentMarshallerHelper;
 import org.jbpm.services.task.wih.NonManagedLocalHTWorkItemHandler;
-import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
-import org.jbpm.shared.services.impl.JbpmLocalTransactionManager;
-import org.jbpm.shared.services.impl.JbpmServicesPersistenceManagerImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,6 +43,7 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.KieSessionConfiguration;
 import org.kie.api.runtime.manager.Context;
+import org.kie.api.runtime.manager.RegisterableItemsFactory;
 import org.kie.api.runtime.manager.RuntimeEngine;
 import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.ProcessInstance;
@@ -64,8 +56,8 @@ import org.kie.api.task.model.TaskSummary;
 import org.kie.internal.executor.api.ExecutorService;
 import org.kie.internal.runtime.manager.InternalRuntimeManager;
 import org.kie.internal.runtime.manager.Mapper;
-import org.kie.internal.runtime.manager.RegisterableItemsFactory;
 import org.kie.internal.runtime.manager.RuntimeEnvironment;
+import org.kie.internal.runtime.manager.RuntimeManagerRegistry;
 import org.kie.internal.task.api.UserGroupCallback;
 
 import bitronix.tm.TransactionManagerServices;
@@ -124,7 +116,9 @@ public class SprintManagementTest {
 				workingMemory.fireAllRules();
 			}
 		});
-        new JPAWorkingMemoryDbLogger(session);
+        Environment env = session.getEnvironment();
+        EntityManagerFactory emf = (EntityManagerFactory) env.get(EnvironmentName.ENTITY_MANAGER_FACTORY);
+        session.addEventListener(AuditLoggerFactory.newJPAInstance(emf, env));
 	}
 
 	@Test
@@ -138,7 +132,6 @@ public class SprintManagementTest {
 		userGroups.put("mark", "testers");
         UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(userGroups);
         TaskService taskService = HumanTaskServiceFactory.newTaskServiceConfigurator()
-        	.transactionManager(new JbpmJTATransactionManager())
         	.entityManagerFactory(Persistence.createEntityManagerFactory("org.jbpm.services.task"))
         	.userGroupCallback(userGroupCallback)
         	.getTaskService();
@@ -393,7 +386,6 @@ public class SprintManagementTest {
 		userGroups.put("mark", "testers");
         UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(userGroups);
         TaskService taskService = HumanTaskServiceFactory.newTaskServiceConfigurator()
-        	.transactionManager(new JbpmJTATransactionManager())
         	.entityManagerFactory(Persistence.createEntityManagerFactory("org.jbpm.services.task"))
         	.userGroupCallback(userGroupCallback)
         	.getTaskService();
@@ -684,36 +676,14 @@ public class SprintManagementTest {
 	}
 	
 	private ExecutorService initExecutorService(RuntimeManager manager) {
-		if (RuntimeManagerRegistry.get().getRuntimeManager("testDeploymentId") == null) {
-			RuntimeManagerRegistry.get().addRuntimeManager("testDeploymentId", manager);
+		if (!RuntimeManagerRegistry.get().isRegistered(manager.getIdentifier())) {
+			RuntimeManagerRegistry.get().register(manager);
 		}
 		this.executorEmf = Persistence.createEntityManagerFactory("org.jbpm.executor");
-	    EntityManager em = executorEmf.createEntityManager();
-		ExecutorServiceImpl service = new ExecutorServiceImpl();
-		JbpmServicesPersistenceManagerImpl pm = new JbpmServicesPersistenceManagerImpl();
-		pm.setEm(em);
-		pm.setTransactionManager(new JbpmLocalTransactionManager());
-		pm.setUseSharedEntityManager(false);
-		ExecutorRequestAdminServiceImpl adminService = new ExecutorRequestAdminServiceImpl();
-		ExecutorImpl executor = new ExecutorImpl();
-		ExecutorRunnable runnable = new ExecutorRunnable();
-		ExecutorQueryServiceImpl queryService = new ExecutorQueryServiceImpl();
-		queryService.setPm(pm);
-		ClassCacheManager cacheManager = new ClassCacheManager();
-		runnable.setClassCacheManager(cacheManager);
-		runnable.setPm(pm);
-		runnable.setQueryService(queryService);
-		executor.setExecutorRunnable(runnable);
-		executor.setClassCacheManager(cacheManager);
-		executor.setPm(pm);
-		executor.setQueryService(queryService);
-		executor.setInterval(1);
-		executor.setRetries(3);
-		executor.setThreadPoolSize(3);
-		adminService.setPm(pm);
-		service.setAdminService(adminService);
-		service.setExecutor(executor);
-		service.setQueryService(queryService);
+	    ExecutorService service = ExecutorServiceFactory.newExecutorService(this.executorEmf);
+		service.setInterval(1);
+		service.setRetries(3);
+		service.setThreadPoolSize(3);
 		service.init();
 		return service;
 	}
@@ -759,6 +729,11 @@ public class SprintManagementTest {
 
 		@Override
 		public void close() { }
+		
+		@Override
+		public boolean isClosed() {
+			return false;
+		}
 		
 		public RuntimeEnvironment getEnvironment() {
 			return new FakeRuntimeEnvironment(kieSession, userGroupCallback);

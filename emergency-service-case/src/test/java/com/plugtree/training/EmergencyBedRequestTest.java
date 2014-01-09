@@ -11,18 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.jbpm.executor.ExecutorServiceFactory;
 import org.jbpm.executor.entities.RequestInfo;
-import org.jbpm.executor.impl.ClassCacheManager;
-import org.jbpm.executor.impl.ExecutorImpl;
-import org.jbpm.executor.impl.ExecutorQueryServiceImpl;
-import org.jbpm.executor.impl.ExecutorRequestAdminServiceImpl;
-import org.jbpm.executor.impl.ExecutorRunnable;
-import org.jbpm.executor.impl.ExecutorServiceImpl;
-import org.jbpm.executor.impl.runtime.RuntimeManagerRegistry;
 import org.jbpm.executor.impl.wih.AsyncWorkItemHandler;
 import org.jbpm.process.instance.event.listeners.RuleAwareProcessEventLister;
-import org.jbpm.shared.services.impl.JbpmJTATransactionManager;
-import org.jbpm.shared.services.impl.JbpmServicesPersistenceManagerImpl;
 import org.jbpm.workflow.instance.WorkflowProcessInstance;
 import org.junit.After;
 import org.junit.Assert;
@@ -40,6 +32,7 @@ import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.runtime.process.WorkItemHandler;
 import org.kie.api.task.TaskService;
 import org.kie.internal.executor.api.ExecutorService;
+import org.kie.internal.runtime.manager.RuntimeManagerRegistry;
 
 import bitronix.tm.TransactionManagerServices;
 
@@ -76,7 +69,6 @@ public class EmergencyBedRequestTest {
             }
         });
         session.addEventListener(new RuleAwareProcessEventLister());
-        
         //register the same handler for all the Work Items present in the process.
         this.session.getWorkItemManager().registerWorkItemHandler("Human Task", htHandler);
         this.session.getWorkItemManager().registerWorkItemHandler("NotificationSystem", nsHandler);
@@ -275,33 +267,34 @@ public class EmergencyBedRequestTest {
 			public void close() { }
 			
 		};
-		RuntimeManagerRegistry.get().addRuntimeManager("testDeploymentId", manager);
+		RuntimeManagerRegistry.get().register(manager);
 		this.executorEmf = Persistence.createEntityManagerFactory("org.jbpm.executor");
-	        EntityManager em = executorEmf.createEntityManager();
-		ExecutorServiceImpl service = new ExecutorServiceImpl();
-		JbpmServicesPersistenceManagerImpl pm = new JbpmServicesPersistenceManagerImpl();
-		pm.setEm(em);
-		pm.setTransactionManager(new JbpmJTATransactionManager());
-		pm.setUseSharedEntityManager(false);
-		ExecutorRequestAdminServiceImpl adminService = new ExecutorRequestAdminServiceImpl();
-		ExecutorImpl executor = new ExecutorImpl();
-		ExecutorRunnable runnable = new ExecutorRunnable();
-		ExecutorQueryServiceImpl queryService = new ExecutorQueryServiceImpl();
-		queryService.setPm(pm);
-		ClassCacheManager cacheManager = new ClassCacheManager();
-		runnable.setClassCacheManager(cacheManager);
-		runnable.setPm(pm);
-		runnable.setQueryService(queryService);
-		executor.setExecutorRunnable(runnable);
-		executor.setClassCacheManager(cacheManager);
-		executor.setPm(pm);
-		executor.setQueryService(queryService);
-		executor.setRetries(3);
-		executor.setThreadPoolSize(3);
-		adminService.setPm(pm);
-		service.setAdminService(adminService);
-		service.setExecutor(executor);
-		service.setQueryService(queryService);
+		ExecutorService service = ExecutorServiceFactory.newExecutorService(this.executorEmf);
+		service.setRetries(3);
+		service.setThreadPoolSize(3);
+		//JbpmServicesPersistenceManagerImpl pm = new JbpmServicesPersistenceManagerImpl();
+		//pm.setEm(em);
+		//pm.setTransactionManager(new JbpmJTATransactionManager());
+		//pm.setUseSharedEntityManager(false);
+		//ExecutorRequestAdminServiceImpl adminService = new ExecutorRequestAdminServiceImpl();
+		//ExecutorImpl executor = new ExecutorImpl();
+		//ExecutorRunnable runnable = new ExecutorRunnable();
+		//ExecutorQueryServiceImpl queryService = new ExecutorQueryServiceImpl();
+		//queryService.setPm(pm);
+		//ClassCacheManager cacheManager = new ClassCacheManager();
+		//runnable.setClassCacheManager(cacheManager);
+		//runnable.setPm(pm);
+		//runnable.setQueryService(queryService);
+		//executor.setExecutorRunnable(runnable);
+		//executor.setClassCacheManager(cacheManager);
+		//executor.setPm(pm);
+		//executor.setQueryService(queryService);
+		//executor.setRetries(3);
+		//executor.setThreadPoolSize(3);
+		//adminService.setPm(pm);
+		//service.setAdminService(adminService);
+		//service.setExecutor(executor);
+		//service.setQueryService(queryService);
 		return service;
 	}
 
