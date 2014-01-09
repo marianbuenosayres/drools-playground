@@ -1,5 +1,7 @@
 package com.plugtree.training;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +30,24 @@ public class SprintManagementCDITest {
 
 	private PoolingDataSource ds;
 
+	private void cleanupSingletonSessionId() {
+		File tempDir = new File(System.getProperty("java.io.tmpdir"));
+		if (tempDir.exists()) {
+			String[] jbpmSerFiles = tempDir.list(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith("-jbpmSessionId.ser");
+				}
+			});
+			for (String file : jbpmSerFiles) {
+				new File(tempDir, file).delete();
+			}
+		}
+	}
+
 	@Before
     public void setUp() throws Exception {
+		cleanupSingletonSessionId();
 		this.ds = new PoolingDataSource();
 		this.ds.setUniqueName("jdbc/testDS");
 		this.ds.setClassName("org.h2.jdbcx.JdbcDataSource");

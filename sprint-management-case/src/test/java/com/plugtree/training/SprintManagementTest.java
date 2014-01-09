@@ -82,7 +82,7 @@ public class SprintManagementTest {
 		this.ds = new PoolingDataSource();
 		this.ds.setUniqueName("jdbc/testDS");
 		this.ds.setClassName("org.h2.jdbcx.JdbcDataSource");
-		this.ds.setMaxPoolSize(3);
+		this.ds.setMaxPoolSize(10);
 		this.ds.setAllowLocalTransactions(true);
 		this.ds.getDriverProperties().setProperty("URL", "jdbc:h2:tasks;MVCC=true;DB_CLOSE_ON_EXIT=TRUE");
 		this.ds.getDriverProperties().setProperty("user", "sa");
@@ -123,6 +123,8 @@ public class SprintManagementTest {
 
 	@Test
 	public void testSmallSprint() throws Exception {
+		//Create persistence unit
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa");
 		//create task service
 		Properties userGroups = new Properties();
 		userGroups.put("john", "developers");
@@ -132,7 +134,7 @@ public class SprintManagementTest {
 		userGroups.put("mark", "testers");
         UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(userGroups);
         TaskService taskService = HumanTaskServiceFactory.newTaskServiceConfigurator()
-        	.entityManagerFactory(Persistence.createEntityManagerFactory("org.jbpm.services.task"))
+        	.entityManagerFactory(emf)
         	.userGroupCallback(userGroupCallback)
         	.getTaskService();
 
@@ -141,7 +143,7 @@ public class SprintManagementTest {
         KieContainer kc = ks.getKieClasspathContainer();
         KieBase kbase = kc.getKieBase("sprint");
         Environment env = EnvironmentFactory.newEnvironment();
-        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa"));
+        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, emf);
         env.set(EnvironmentName.TRANSACTION_MANAGER, TransactionManagerServices.getTransactionManager());
         KieSession ksession = ks.getStoreServices().newKieSession(kbase, null, env);
         int sessionId = ksession.getId();
@@ -377,6 +379,8 @@ public class SprintManagementTest {
 
 	@Test(timeout=60000)
 	public void testSmallSprintWithExecutor() throws Exception {
+		//Create persistence unit
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa");
 		//create task service
 		Properties userGroups = new Properties();
 		userGroups.put("john", "developers");
@@ -386,7 +390,7 @@ public class SprintManagementTest {
 		userGroups.put("mark", "testers");
         UserGroupCallback userGroupCallback = new JBossUserGroupCallbackImpl(userGroups);
         TaskService taskService = HumanTaskServiceFactory.newTaskServiceConfigurator()
-        	.entityManagerFactory(Persistence.createEntityManagerFactory("org.jbpm.services.task"))
+        	.entityManagerFactory(emf)
         	.userGroupCallback(userGroupCallback)
         	.getTaskService();
         
@@ -395,7 +399,7 @@ public class SprintManagementTest {
         KieContainer kc = ks.getKieClasspathContainer();
         KieBase kbase = kc.getKieBase("sprint");
         Environment env = EnvironmentFactory.newEnvironment();
-        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, Persistence.createEntityManagerFactory("org.jbpm.persistence.jpa"));
+        env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, emf);
         env.set(EnvironmentName.TRANSACTION_MANAGER, TransactionManagerServices.getTransactionManager());
         env.set("deploymentId", "testDeploymentId");
         KieSession ksession = ks.getStoreServices().newKieSession(kbase, null, env);

@@ -21,9 +21,7 @@ import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.drools.persistence.SingleSessionCommandService;
 import org.jboss.seam.transaction.DefaultSeamTransaction;
 import org.jboss.seam.transaction.SeamTransaction;
-import org.jbpm.kie.services.api.DeploymentService;
 import org.jbpm.kie.services.impl.KModuleDeploymentService;
-import org.jbpm.process.audit.JPAWorkingMemoryDbLogger;
 import org.jbpm.runtime.manager.impl.RuntimeEnvironmentBuilder;
 import org.jbpm.runtime.manager.impl.SingletonRuntimeManager;
 import org.jbpm.runtime.manager.impl.factory.JPASessionFactory;
@@ -36,7 +34,9 @@ import org.kie.api.runtime.EnvironmentName;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.process.ProcessInstance;
 import org.kie.api.task.TaskService;
+import org.kie.internal.deployment.DeploymentService;
 import org.kie.internal.runtime.manager.RuntimeEnvironment;
+import org.kie.internal.runtime.manager.context.EmptyContext;
 
 import bitronix.tm.TransactionManagerServices;
 
@@ -92,14 +92,12 @@ public class SprintMgmtApp {
 				addEnvironmentEntry(EnvironmentName.TRANSACTION_MANAGER, TransactionManagerServices.getTransactionManager()).
 				userGroupCallback(new CDIUserGroupCallback()).
 				knowledgeBase(kbase).get();
-		
-		this.runtimeManager = new SingletonRuntimeManager();
-		this.runtimeManager.setEnvironment(environment);
-		this.runtimeManager.setFactory(new JPASessionFactory(environment));
-		this.runtimeManager.setIdentifier("default-singleton");
-		this.runtimeManager.setTaskServiceFactory(new LocalTaskServiceFactory(environment));
+		this.runtimeManager = new SingletonRuntimeManager(environment, 
+				new JPASessionFactory(environment), 
+				new LocalTaskServiceFactory(environment),
+				"default-singleton");
 		this.runtimeManager.init();
-        initRuntime(runtimeManager.getRuntimeEngine(null).getKieSession());
+        initRuntime(runtimeManager.getRuntimeEngine(EmptyContext.get()).getKieSession());
 	}
 	
 	public void initRuntime(KieSession ksession) {
@@ -118,7 +116,7 @@ public class SprintMgmtApp {
 				workingMemory.fireAllRules();
 			}
 		});
-		new JPAWorkingMemoryDbLogger(ksession);
+		//ksession.addEventListener(AuditLoggerFactory.newJPAInstance(getEmf(), getEnvironment()));
 	}
 	
 	private Environment env = null;
@@ -126,6 +124,7 @@ public class SprintMgmtApp {
 	public synchronized Environment getEnvironment() {
 		if (this.env == null) {
 			this.env = EnvironmentFactory.newEnvironment();
+			this.env.set("IS_JTA_TRANSACTION", Boolean.FALSE);
 			this.env.set(EnvironmentName.ENTITY_MANAGER_FACTORY, getEmf());
 		}
 		return this.env;
