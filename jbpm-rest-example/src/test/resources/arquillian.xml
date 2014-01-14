@@ -8,6 +8,7 @@
             <property name="jbossHome">./target/jboss-as/jboss-as-7.1.1.Final</property>
             <property name="bundlePath">./target/jboss-as/jboss-as-7.1.1.Final/bundles</property>
             <property name="modulePath">./target/jboss-as/jboss-as-7.1.1.Final/modules</property>
+            <property name="javaVmArguments">-Xms512m -Xmx1024m -XX:MaxPermSize=256M</property>
         </configuration>
         <!--protocol type="Servlet 3.0">
             <property name="host">localhost</property>
