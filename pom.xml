@@ -37,10 +37,24 @@
     <module>emergency-service-case</module>
     <module>domain-specific-processes-homework</module>
     <module>runtime-manager-example</module>
-    <!--module>jbpm-rest-example</module --><!--TODO ADD THIS MODULE -->
     <module>sprint-management-case</module>
     <module>sprint-management-case-cdi</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>fullProfile</id>
+      <activation>
+        <property>
+          <name>full</name>
+        </property>
+      </activation>
+      <modules>
+        <module>jbpm-rest-example</module>
+      </modules>
+    </profile>
+  </profiles>
+
   <build>
     <pluginManagement>
       <plugins>
