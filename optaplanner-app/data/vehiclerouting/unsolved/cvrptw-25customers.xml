@@ -1,0 +1,473 @@
+<VrpTimeWindowedVehicleRoutingSolution id="1">
+  <id>0</id>
+  <name>C101</name>
+  <locationList id="2">
+    <VrpLocation id="3">
+      <id>0</id>
+      <latitude>40.0</latitude>
+      <longitude>50.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="4">
+      <id>1</id>
+      <latitude>45.0</latitude>
+      <longitude>68.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="5">
+      <id>2</id>
+      <latitude>45.0</latitude>
+      <longitude>70.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="6">
+      <id>3</id>
+      <latitude>42.0</latitude>
+      <longitude>66.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="7">
+      <id>4</id>
+      <latitude>42.0</latitude>
+      <longitude>68.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="8">
+      <id>5</id>
+      <latitude>42.0</latitude>
+      <longitude>65.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="9">
+      <id>6</id>
+      <latitude>40.0</latitude>
+      <longitude>69.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="10">
+      <id>7</id>
+      <latitude>40.0</latitude>
+      <longitude>66.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="11">
+      <id>8</id>
+      <latitude>38.0</latitude>
+      <longitude>68.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="12">
+      <id>9</id>
+      <latitude>38.0</latitude>
+      <longitude>70.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="13">
+      <id>10</id>
+      <latitude>35.0</latitude>
+      <longitude>66.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="14">
+      <id>11</id>
+      <latitude>35.0</latitude>
+      <longitude>69.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="15">
+      <id>12</id>
+      <latitude>25.0</latitude>
+      <longitude>85.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="16">
+      <id>13</id>
+      <latitude>22.0</latitude>
+      <longitude>75.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="17">
+      <id>14</id>
+      <latitude>22.0</latitude>
+      <longitude>85.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="18">
+      <id>15</id>
+      <latitude>20.0</latitude>
+      <longitude>80.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="19">
+      <id>16</id>
+      <latitude>20.0</latitude>
+      <longitude>85.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="20">
+      <id>17</id>
+      <latitude>18.0</latitude>
+      <longitude>75.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="21">
+      <id>18</id>
+      <latitude>15.0</latitude>
+      <longitude>75.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="22">
+      <id>19</id>
+      <latitude>15.0</latitude>
+      <longitude>80.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="23">
+      <id>20</id>
+      <latitude>30.0</latitude>
+      <longitude>50.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="24">
+      <id>21</id>
+      <latitude>30.0</latitude>
+      <longitude>52.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="25">
+      <id>22</id>
+      <latitude>28.0</latitude>
+      <longitude>52.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="26">
+      <id>23</id>
+      <latitude>28.0</latitude>
+      <longitude>55.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="27">
+      <id>24</id>
+      <latitude>25.0</latitude>
+      <longitude>50.0</longitude>
+    </VrpLocation>
+    <VrpLocation id="28">
+      <id>25</id>
+      <latitude>25.0</latitude>
+      <longitude>52.0</longitude>
+    </VrpLocation>
+  </locationList>
+  <depotList id="29">
+    <VrpTimeWindowedDepot id="30">
+      <id>0</id>
+      <location reference="3"/>
+      <milliReadyTime>0</milliReadyTime>
+      <milliDueTime>1236000</milliDueTime>
+    </VrpTimeWindowedDepot>
+  </depotList>
+  <vehicleList id="31">
+    <VrpVehicle id="32">
+      <id>0</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="33">
+      <id>1</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="34">
+      <id>2</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="35">
+      <id>3</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="36">
+      <id>4</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="37">
+      <id>5</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="38">
+      <id>6</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="39">
+      <id>7</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="40">
+      <id>8</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="41">
+      <id>9</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="42">
+      <id>10</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="43">
+      <id>11</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="44">
+      <id>12</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="45">
+      <id>13</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="46">
+      <id>14</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="47">
+      <id>15</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="48">
+      <id>16</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="49">
+      <id>17</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="50">
+      <id>18</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="51">
+      <id>19</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="52">
+      <id>20</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="53">
+      <id>21</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="54">
+      <id>22</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="55">
+      <id>23</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+    <VrpVehicle id="56">
+      <id>24</id>
+      <capacity>200</capacity>
+      <depot class="VrpTimeWindowedDepot" reference="30"/>
+    </VrpVehicle>
+  </vehicleList>
+  <customerList id="57">
+    <VrpTimeWindowedCustomer id="58">
+      <id>1</id>
+      <location reference="4"/>
+      <demand>10</demand>
+      <milliReadyTime>912000</milliReadyTime>
+      <milliDueTime>967000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="59">
+      <id>2</id>
+      <location reference="5"/>
+      <demand>30</demand>
+      <milliReadyTime>825000</milliReadyTime>
+      <milliDueTime>870000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="60">
+      <id>3</id>
+      <location reference="6"/>
+      <demand>10</demand>
+      <milliReadyTime>65000</milliReadyTime>
+      <milliDueTime>146000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="61">
+      <id>4</id>
+      <location reference="7"/>
+      <demand>10</demand>
+      <milliReadyTime>727000</milliReadyTime>
+      <milliDueTime>782000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="62">
+      <id>5</id>
+      <location reference="8"/>
+      <demand>10</demand>
+      <milliReadyTime>15000</milliReadyTime>
+      <milliDueTime>67000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="63">
+      <id>6</id>
+      <location reference="9"/>
+      <demand>20</demand>
+      <milliReadyTime>621000</milliReadyTime>
+      <milliDueTime>702000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="64">
+      <id>7</id>
+      <location reference="10"/>
+      <demand>20</demand>
+      <milliReadyTime>170000</milliReadyTime>
+      <milliDueTime>225000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="65">
+      <id>8</id>
+      <location reference="11"/>
+      <demand>20</demand>
+      <milliReadyTime>255000</milliReadyTime>
+      <milliDueTime>324000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="66">
+      <id>9</id>
+      <location reference="12"/>
+      <demand>10</demand>
+      <milliReadyTime>534000</milliReadyTime>
+      <milliDueTime>605000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="67">
+      <id>10</id>
+      <location reference="13"/>
+      <demand>10</demand>
+      <milliReadyTime>357000</milliReadyTime>
+      <milliDueTime>410000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="68">
+      <id>11</id>
+      <location reference="14"/>
+      <demand>10</demand>
+      <milliReadyTime>448000</milliReadyTime>
+      <milliDueTime>505000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="69">
+      <id>12</id>
+      <location reference="15"/>
+      <demand>20</demand>
+      <milliReadyTime>652000</milliReadyTime>
+      <milliDueTime>721000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="70">
+      <id>13</id>
+      <location reference="16"/>
+      <demand>30</demand>
+      <milliReadyTime>30000</milliReadyTime>
+      <milliDueTime>92000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="71">
+      <id>14</id>
+      <location reference="17"/>
+      <demand>10</demand>
+      <milliReadyTime>567000</milliReadyTime>
+      <milliDueTime>620000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="72">
+      <id>15</id>
+      <location reference="18"/>
+      <demand>40</demand>
+      <milliReadyTime>384000</milliReadyTime>
+      <milliDueTime>429000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="73">
+      <id>16</id>
+      <location reference="19"/>
+      <demand>40</demand>
+      <milliReadyTime>475000</milliReadyTime>
+      <milliDueTime>528000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="74">
+      <id>17</id>
+      <location reference="20"/>
+      <demand>20</demand>
+      <milliReadyTime>99000</milliReadyTime>
+      <milliDueTime>148000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="75">
+      <id>18</id>
+      <location reference="21"/>
+      <demand>20</demand>
+      <milliReadyTime>179000</milliReadyTime>
+      <milliDueTime>254000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="76">
+      <id>19</id>
+      <location reference="22"/>
+      <demand>10</demand>
+      <milliReadyTime>278000</milliReadyTime>
+      <milliDueTime>345000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="77">
+      <id>20</id>
+      <location reference="23"/>
+      <demand>10</demand>
+      <milliReadyTime>10000</milliReadyTime>
+      <milliDueTime>73000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="78">
+      <id>21</id>
+      <location reference="24"/>
+      <demand>20</demand>
+      <milliReadyTime>914000</milliReadyTime>
+      <milliDueTime>965000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="79">
+      <id>22</id>
+      <location reference="25"/>
+      <demand>20</demand>
+      <milliReadyTime>812000</milliReadyTime>
+      <milliDueTime>883000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="80">
+      <id>23</id>
+      <location reference="26"/>
+      <demand>10</demand>
+      <milliReadyTime>732000</milliReadyTime>
+      <milliDueTime>777000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="81">
+      <id>24</id>
+      <location reference="27"/>
+      <demand>10</demand>
+      <milliReadyTime>65000</milliReadyTime>
+      <milliDueTime>144000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+    <VrpTimeWindowedCustomer id="82">
+      <id>25</id>
+      <location reference="28"/>
+      <demand>40</demand>
+      <milliReadyTime>169000</milliReadyTime>
+      <milliDueTime>224000</milliDueTime>
+      <milliServiceDuration>90000</milliServiceDuration>
+    </VrpTimeWindowedCustomer>
+  </customerList>
+</VrpTimeWindowedVehicleRoutingSolution>

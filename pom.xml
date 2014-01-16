@@ -50,7 +50,10 @@
         </property>
       </activation>
       <modules>
+        <module>optaplanner-app</module>
+        <module>optaplanner-example</module>
         <module>jbpm-rest-example</module>
+        <module>uberfire-demo</module>
       </modules>
     </profile>
   </profiles>

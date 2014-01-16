@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.plugtree.training</groupId>
+    <artifactId>droolsjbpm-training</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>optaplanner-app</artifactId>
+
+  <name>OptaPlanner examples application</name>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+            <executable>java</executable>
+            <classpathScope>runtime</classpathScope>
+            <arguments>
+              <argument>-Xms256m</argument>
+              <argument>-Xmx1024m</argument>
+              <argument>-server</argument>
+              <argument>-cp</argument>
+              <classpath/>
+              <argument>org.optaplanner.examples.app.OptaPlannerExamplesApp</argument>
+            </arguments>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <dependencies>
+    <!-- Internal dependencies -->
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-core</artifactId>
+      <version>${kie.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-benchmark</artifactId>
+      <version>${kie.version}</version>
+    </dependency>
+    <!-- External dependencies -->
+    <!-- Commons -->
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.9</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Xstream -->
+    <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.4.3</version>
+    </dependency>
+
+    <!-- Examples only dependencies. -->
+    <!--
+      WARNING: every examples only dependency must be properly dealt with in
+      optaplanner-distribution/src/main/assembly/assembly-optaplanner.xml
+    -->
+    <!-- Converters -->
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.3</version>
+    </dependency>
+  </dependencies>
+
+</project>

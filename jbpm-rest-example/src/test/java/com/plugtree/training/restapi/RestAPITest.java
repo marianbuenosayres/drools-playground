@@ -64,6 +64,8 @@ public class RestAPITest {
     	Assert.assertEquals(Status.OK, response3.getResponseStatus());
     	System.out.println(">>> Project org.jbpm:HR:1.0 deployed");
     	
+    	//TODO deployment through REST API is not working. Code remains as demonstration
+    	
         RuntimeEngine engine = new RemoteRestRuntimeFactory("org.jbpm:HR:1.0", 
                 new URL("http://localhost:8080/kie-wb"),
                 "krisv", "mypass")

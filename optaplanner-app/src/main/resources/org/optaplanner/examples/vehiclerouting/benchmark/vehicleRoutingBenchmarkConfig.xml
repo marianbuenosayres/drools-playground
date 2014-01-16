@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plannerBenchmark>
+  <benchmarkDirectory>local/data/vehiclerouting</benchmarkDirectory>
+  <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
+  <warmUpSecondsSpend>30</warmUpSecondsSpend>
+
+  <inheritedSolverBenchmark>
+    <problemBenchmarks>
+      <problemIOClass>org.optaplanner.examples.vehiclerouting.persistence.VehicleRoutingProblemIO</problemIOClass>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n32-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n33-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n33-k6.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n34-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n36-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n37-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n37-k6.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n38-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n39-k5.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n39-k6.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n44-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n45-k6.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n45-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n46-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n48-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n53-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n54-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n55-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n60-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n61-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n62-k8.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n63-k10.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n63-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n64-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n65-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n69-k9.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/A-n80-k10.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/F-n135-k7.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/F-n45-k4.vrp</inputSolutionFile>
+      <inputSolutionFile>data/vehiclerouting/import/capacitated/F-n72-k4.vrp</inputSolutionFile>
+      <problemStatisticType>BEST_SCORE</problemStatisticType>
+    </problemBenchmarks>
+
+    <solver>
+      <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+      <solutionClass>org.optaplanner.examples.vehiclerouting.domain.VehicleRoutingSolution</solutionClass>
+      <planningEntityClass>org.optaplanner.examples.vehiclerouting.domain.Customer</planningEntityClass>
+      <planningEntityClass>org.optaplanner.examples.vehiclerouting.domain.Standstill</planningEntityClass>
+
+      <scoreDirectorFactory>
+        <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
+        <scoreDrl>/org/optaplanner/examples/vehiclerouting/solver/vehicleRoutingScoreRules.drl</scoreDrl>
+      </scoreDirectorFactory>
+
+      <termination>
+        <maximumMinutesSpend>5</maximumMinutesSpend>
+      </termination>
+    </solver>
+  </inheritedSolverBenchmark>
+
+  <solverBenchmark>
+    <name>Tabu Search</name>
+    <solver>
+      <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+      </constructionHeuristic>
+      <localSearch>
+        <unionMoveSelector>
+          <changeMoveSelector/>
+          <swapMoveSelector/>
+          <subChainChangeMoveSelector>
+            <selectReversingMoveToo>true</selectReversingMoveToo>
+          </subChainChangeMoveSelector>
+          <subChainSwapMoveSelector>
+            <selectReversingMoveToo>true</selectReversingMoveToo>
+          </subChainSwapMoveSelector>
+        </unionMoveSelector>
+        <acceptor>
+          <entityTabuSize>9</entityTabuSize>
+        </acceptor>
+        <forager>
+          <acceptedCountLimit>2000</acceptedCountLimit>
+        </forager>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+  <solverBenchmark>
+    <name>Late Acceptance</name>
+    <solver>
+      <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+      </constructionHeuristic>
+      <localSearch>
+        <unionMoveSelector>
+          <changeMoveSelector/>
+          <swapMoveSelector/>
+          <subChainChangeMoveSelector>
+            <selectReversingMoveToo>true</selectReversingMoveToo>
+          </subChainChangeMoveSelector>
+          <subChainSwapMoveSelector>
+            <selectReversingMoveToo>true</selectReversingMoveToo>
+          </subChainSwapMoveSelector>
+        </unionMoveSelector>
+        <acceptor>
+          <lateAcceptanceSize>200</lateAcceptanceSize>
+        </acceptor>
+        <forager>
+          <acceptedCountLimit>1</acceptedCountLimit>
+        </forager>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+</plannerBenchmark>
