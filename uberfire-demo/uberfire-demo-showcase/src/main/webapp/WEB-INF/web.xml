@@ -5,12 +5,7 @@
 		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
 
-  <listener>
-    <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
-  </listener>
-  <listener>
-    <listener-class>org.jboss.solder.servlet.event.ServletEventBridgeListener</listener-class>
-  </listener>
+  
 
   <filter>
     <filter-name>UberFire Security Filter</filter-name>
@@ -68,46 +63,10 @@ profile in pom.xml to use that. -->
     <servlet-name>ErraiServlet</servlet-name>
     <url-pattern>*.erraiBus</url-pattern>
   </servlet-mapping>
-
-  <servlet>
-    <servlet-name>TestCompleteFormServlet</servlet-name>
-    <servlet-class>org.jbpm.form.builder.ng.server.impl.TestCompleteFormServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>TestCompleteFormServlet</servlet-name>
-    <url-pattern>/org.jbpm.form.builder.ng.FormBuilderShowcase/complete</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ViewFormServlet</servlet-name>
-    <servlet-class>org.jbpm.form.builder.ng.server.impl.ViewFormServlet</servlet-class>
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>ViewFormServlet</servlet-name>
-    <url-pattern>/org.jbpm.form.builder.ng.FormBuilderShowcase/viewForm</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>DownloadFileServlet</servlet-name>
-    <servlet-class>org.jbpm.form.builder.ng.server.impl.DownloadFileServlet</servlet-class>
-  </servlet>
   
-  <servlet-mapping>
-    <servlet-name>DownloadFileServlet</servlet-name>
-    <url-pattern>/org.jbpm.form.builder.ng.FormBuilderShowcase/downloadFile</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>ImportFileServlet</servlet-name>
-    <servlet-class>org.jbpm.form.builder.ng.server.impl.ImportFileServlet</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>ImportFileServlet</servlet-name>
-    <url-pattern>/org.jbpm.form.builder.ng.FormBuilderShowcase/uploadFile</url-pattern>
-  </servlet-mapping>
+  <listener>
+    <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
+  </listener>
 
   <resource-env-ref>
     <description>Object factory for the CDI Bean Manager</description>

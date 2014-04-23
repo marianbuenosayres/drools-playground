@@ -26,13 +26,6 @@ public interface ShowcaseImages
 
     ShowcaseImages INSTANCE = GWT.create( ShowcaseImages.class );
 
-    @Source("images/monitoring.png")
-    ImageResource monitoringScreenshot();
-
-    @Source("images/hdrlogo_drools.gif")
-    ImageResource hdrlogoDrools();
-    
-    
     @Source("images/uf-logo.png")
     ImageResource uberfireLogo();
     
